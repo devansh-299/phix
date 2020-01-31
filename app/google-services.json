@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "771823411615",
+    "firebase_url": "https://phix-f8328.firebaseio.com",
+    "project_id": "phix-f8328",
+    "storage_bucket": "phix-f8328.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771823411615:android:74c53f708ff04cb13d1daa",
+        "android_client_info": {
+          "package_name": "com.thebiglosers.phix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771823411615-aff5kanl5dh9dsmfe0mq0n7hik5n26oq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thebiglosers.phix",
+            "certificate_hash": "6a0846c1e2a9340b11ded863dc625e644e170f1b"
+          }
+        },
+        {
+          "client_id": "771823411615-s1rrm42o94b2qb6s6ov9qt8h38247r0v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpwP1ZBD5ujr4YiZ_-vMEgz9VSjzkTf_M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771823411615-s1rrm42o94b2qb6s6ov9qt8h38247r0v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
