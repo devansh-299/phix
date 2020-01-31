@@ -65,8 +65,11 @@
 
                 <TextView
                     android:id="@+id/tv_found_friend"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_horizontal"
+                    android:textAlignment="center"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="5"
                     android:layout_height="match_parent"
                     android:text="Friend name"
                     android:textColor="@color/material_blue"
@@ -74,9 +77,11 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/bt_yes_"
+                    android:id="@+id/btn_yes_"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/ic_check_circle"
-                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
 
 
@@ -88,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_button_background"
                 android:layout_gravity="center_horizontal"
-                android:text="Search Friend"
+                android:text="Search Again"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 

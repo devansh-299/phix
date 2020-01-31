@@ -79,6 +79,12 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
+                <Button
+                    android:id="@+id/timepass"
+                    android:text="timepass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
             </LinearLayout>
 
 

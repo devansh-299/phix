@@ -185,9 +185,11 @@ public class PersonalFragment extends Fragment {
 
 
     public void popAddFriend() {
+
         EditText etFriendName;
         Button btSearchFriend;
         Button btSearchAgain;
+        Button btnYes;
         LinearLayout searhcLayout;
         LinearLayout searchAgainLayout;
         TextView foundFrienName;
@@ -201,6 +203,7 @@ public class PersonalFragment extends Fragment {
         btSearchFriend = (Button) myDialog.findViewById(R.id.bt_search_friend);
         btSearchAgain = (Button) myDialog.findViewById(R.id.bt_search_again);
         foundFrienName = (TextView) myDialog.findViewById(R.id.tv_found_friend);
+        btnYes = (Button) myDialog.findViewById(R.id.btn_yes_);
 
         btSearchFriend.setOnClickListener(view -> {
             String friendName  = etFriendName.getText().toString();
@@ -217,11 +220,15 @@ public class PersonalFragment extends Fragment {
 
             viewModel.imageLoadError.observe(this, isError -> {
                 if (isError != null && isError instanceof Boolean) {
-
+                    foundFrienName.setText("No user found!");
+                    searhcLayout.setVisibility(View.GONE);
+                    searchAgainLayout.setVisibility(View.VISIBLE);
                 }
 
             });
         });
+
+        btnYes.setOnClickListener(view -> myDialog.dismiss());
 
         btSearchAgain.setOnClickListener(view -> {
             searhcLayout.setVisibility(View.VISIBLE);

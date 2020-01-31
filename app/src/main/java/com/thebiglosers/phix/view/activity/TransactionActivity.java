@@ -9,6 +9,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,7 +17,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebiglosers.phix.R;
@@ -50,6 +50,7 @@ public class TransactionActivity extends AppCompatActivity {
     private TransactionAdapter mAdapter;
 
     private TransactionViewModel viewModel;
+    Dialog myDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,26 +141,10 @@ public class TransactionActivity extends AppCompatActivity {
 
 
     public void popUpAddTransaction () {
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_user, null);
 
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        myDialog.setContentView(R.layout.popup_transaction);
 
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
-        // dismiss the popup window when touched
-        popupView.setOnTouchListener((v, event) -> {
-            popupWindow.dismiss();
-            return true;
-        });
     }
 
 }

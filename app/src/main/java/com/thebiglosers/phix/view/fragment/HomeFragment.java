@@ -1,11 +1,13 @@
 package com.thebiglosers.phix.view.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.view.activity.MainActivity;
+import com.thebiglosers.phix.view.activity.PaymentActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -43,5 +46,10 @@ public class HomeFragment extends Fragment {
                 .circleCrop()
                 .into(ivUserImage);
         tvUserName.setText(((MainActivity) getActivity()).getUserName());
+    }
+
+    @OnClick(R.id.timepass)
+    public void yoPay() {
+        startActivity(new Intent(getContext(), PaymentActivity.class));
     }
 }
