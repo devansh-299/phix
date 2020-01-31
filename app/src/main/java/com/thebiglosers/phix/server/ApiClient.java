@@ -6,6 +6,7 @@ import com.thebiglosers.phix.model.User;
 import java.util.List;
 
 import io.reactivex.Single;
+
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -15,7 +16,7 @@ public class ApiClient {
     private TransactionApi transactionApi;
     private UserApi userApi;
     private static Retrofit retrofitInstance = null;
-    private static final String BASE_URL = "https://api.github.com/";
+    private static final String BASE_URL = "https://9ed4cda2.ngrok.io/";
 
 
     public ApiClient() {
@@ -47,4 +48,7 @@ public class ApiClient {
         return transactionApi.getTransaction();
     }
 
+    public Single<User> getFriend(String searchQuery) {
+        return userApi.getFriend(searchQuery);
+    }
 }

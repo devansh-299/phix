@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:orientation="vertical">
 
+
         <LinearLayout
             android:background="@color/material_blue"
             android:layout_width="match_parent"
@@ -50,6 +51,52 @@
             android:layout_height="0dp"
             android:layout_weight="5">
 
+            <LinearLayout
+                android:id="@+id/loading_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/loading_image"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Loading..."
+                    android:textColor="@color/material_blue"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/error_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/error_image"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Error!"
+                    android:textColor="@color/material_blue"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_friend_transaction"
                 android:background="@color/white"
@@ -61,6 +108,7 @@
                 android:id="@+id/fab_add_transaction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:foreground="@drawable/ic_add"
                 android:layout_alignEnd="@+id/rv_friend_transaction"
                 android:layout_alignBottom="@+id/rv_friend_transaction"
                 android:layout_marginEnd="10dp"

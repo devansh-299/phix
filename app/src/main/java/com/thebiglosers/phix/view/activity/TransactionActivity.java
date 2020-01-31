@@ -10,7 +10,11 @@ import butterknife.ButterKnife;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +40,12 @@ public class TransactionActivity extends AppCompatActivity {
     @BindView(R.id.tv_friend_name)
     TextView tvFriendName;
 
+    @BindView(R.id.loading_layout)
+    LinearLayout loadingLayout;
+
+    @BindView(R.id.error_layout)
+    LinearLayout errorLayout;
+
     private List<Transaction> transactionList = new ArrayList<>();
     private TransactionAdapter mAdapter;
 
@@ -50,6 +60,9 @@ public class TransactionActivity extends AppCompatActivity {
         // getting ViewModel
         viewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
         viewModel.refresh();
+
+        loadingLayout.setVisibility(View.GONE);
+        errorLayout.setVisibility(View.GONE);
 
         if (getIntent().getStringExtra("friend_name")!= null) {
             tvFriendName.setText(getIntent().getStringExtra("friend_name"));
@@ -75,6 +88,8 @@ public class TransactionActivity extends AppCompatActivity {
             }
         });
 
+        fab.setOnClickListener(view -> popUpAddTransaction());
+
         // for temporary data
         makeTransactions();
 
@@ -93,12 +108,18 @@ public class TransactionActivity extends AppCompatActivity {
             if(transactionParameter!=null && transactionParameter instanceof List){
                 rvFriendTransaction.setVisibility(View.VISIBLE);
                 mAdapter.updateImageList(transactionParameter);
+                errorLayout.setVisibility(View.GONE);
+                loadingLayout.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
             }
         });
 
         viewModel.imageLoadError.observe(this, isError -> {
             if (isError != null && isError instanceof Boolean){
-                Toast.makeText(this, "Error in getting",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Error getting Transactions",Toast.LENGTH_SHORT).show();
+                errorLayout.setVisibility(View.VISIBLE);
+                loadingLayout.setVisibility(View.GONE);
+                //fab.setVisibility(View.GONE);
             }
 
         });
@@ -109,8 +130,35 @@ public class TransactionActivity extends AppCompatActivity {
                 if(isLoading){
                     //listError.setVisibility(View.GONE);
                     rvFriendTransaction.setVisibility(View.GONE);
+                    loadingLayout.setVisibility(View.VISIBLE);
+                    errorLayout.setVisibility(View.GONE);
+                    fab.setVisibility(View.GONE);
                 }
             }
+        });
+    }
+
+
+    public void popUpAddTransaction () {
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_user, null);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener((v, event) -> {
+            popupWindow.dismiss();
+            return true;
         });
     }
 

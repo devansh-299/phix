@@ -45,8 +45,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         User user = mUser.get(position);
-        holder.name.setText(user.getName());
+        holder.name.setText(user.getFullName());
         //holder.imageView.setText(transaction.getDate());
+    }
+
+    public void updateImageList(List<User> newList) {
+        mUser.clear();
+        mUser.addAll(newList);
+        notifyDataSetChanged();
     }
 
     @Override

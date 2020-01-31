@@ -1,6 +1,7 @@
 package com.thebiglosers.phix.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.thebiglosers.phix.model.Transaction;
@@ -54,6 +55,7 @@ public class TransactionViewModel extends AndroidViewModel {
                             @Override
                             public void onError(Throwable e) {
                                 loading.setValue(false);
+                                Log.e("ERROR",e.getMessage());
                                 imageLoadError.setValue(true);
                             }
                         }));

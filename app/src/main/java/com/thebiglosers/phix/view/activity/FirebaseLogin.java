@@ -43,6 +43,7 @@ public class FirebaseLogin extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("userName", user.getDisplayName());
             intent.putExtra("userImage",user.getPhotoUrl().toString() );
+
             startActivity(intent);
         }
     }

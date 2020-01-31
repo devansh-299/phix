@@ -1,7 +1,6 @@
 package com.thebiglosers.phix.view.fragment;
 
 
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.view.activity.MainActivity;
 
@@ -36,8 +36,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUserData() {
-//        Uri imageUri = Uri.parse(((MainActivity) getActivity()).getUserImageString());
-//        ivUserImage.setImageURI(imageUri);
+        Glide
+                .with(getContext())
+                .load(((MainActivity) getActivity()).getUserImageString())
+                .centerCrop()
+                .circleCrop()
+                .into(ivUserImage);
         tvUserName.setText(((MainActivity) getActivity()).getUserName());
     }
 }

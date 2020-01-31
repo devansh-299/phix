@@ -4,19 +4,19 @@
     <item
         android:id="@+id/action_recents"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_assessment"
         android:title="Home"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_favorites"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_background"
+        android:icon="@drawable/ic_friends"
         android:title="Personal"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_nearby"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_history"
         android:title="Group"
         app:showAsAction="always" />
 </menu>

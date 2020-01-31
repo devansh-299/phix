@@ -2,12 +2,13 @@
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#6C63FF</color>
 
     <!--Custom Colors-->
 
     <color name="material_black">#272727</color>
-    <color name="material_blue">#8c9eff</color>
+    <color name="material_blue">#6C63FF</color>
     <color name="white">#FFFFFF</color>
+    <color name="material_grey">#ffcdd2</color>
 
 </resources>

@@ -10,6 +10,6 @@ import retrofit2.http.GET;
 
 public interface TransactionApi {
 
-    @GET("DevTides/DogsApi/master/dogs.json")
+    @GET("credits/testuser")
     Single<List<Transaction>> getTransaction();
 }
