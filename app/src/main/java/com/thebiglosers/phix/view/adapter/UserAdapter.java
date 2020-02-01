@@ -1,14 +1,20 @@
 package com.thebiglosers.phix.view.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.model.User;
+import com.thebiglosers.phix.view.activity.MainActivity;
 
 import java.util.List;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> {
 
     private List<User> mUser;
+    Context context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
@@ -29,8 +36,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     }
 
 
-    public UserAdapter(List<User> user) {
+    public UserAdapter(List<User> user,Context context) {
         this.mUser = user;
+        this.context = context;
     }
 
     @Override
@@ -46,7 +54,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     public void onBindViewHolder(MyViewHolder holder, int position) {
         User user = mUser.get(position);
         holder.name.setText(user.getFullName());
-        //holder.imageView.setText(transaction.getDate());
+
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .circleCrop()
+                .placeholder(R.drawable.splash_icon)
+                .error(R.drawable.splash_icon)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .priority(Priority.IMMEDIATE);
+
+        Glide.with(context).load(user.getImageString())
+                .apply(options)
+                .into(holder.imageView);
     }
 
     public void updateImageList(List<User> newList) {

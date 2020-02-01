@@ -34,15 +34,15 @@ public class UserViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public void refresh() {
-        fetchFromRemote();
+    public void refresh(String userName) {
+        fetchFromRemote(userName);
     }
 
-    private void fetchFromRemote() {
+    private void fetchFromRemote(String mUser) {
         loading.setValue(true);
         disposable.add(
 
-                apiClient.getUser()
+                apiClient.getUser(mUser)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<List<User>>() {

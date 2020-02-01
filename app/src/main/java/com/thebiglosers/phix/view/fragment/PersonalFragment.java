@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.User;
+import com.thebiglosers.phix.view.activity.MainActivity;
 import com.thebiglosers.phix.view.activity.TransactionActivity;
 import com.thebiglosers.phix.view.adapter.UserAdapter;
 import com.thebiglosers.phix.viewmodel.UserViewModel;
@@ -69,9 +70,9 @@ public class PersonalFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
-        viewModel.refresh();
+        viewModel.refresh(((MainActivity) getActivity()).getUniqueUserName());
 
-        mAdapter = new UserAdapter(userList);
+        mAdapter = new UserAdapter(userList,getActivity());
         @SuppressLint("RestrictedApi") RecyclerView.LayoutManager mLayoutManager =
                 new LinearLayoutManager(getApplicationContext());
         rvUsers.setLayoutManager(mLayoutManager);
@@ -83,7 +84,8 @@ public class PersonalFragment extends Fragment {
                 new RecyclerItemClickListener(getApplicationContext(),
                         (view1, position) -> {
                             Intent intent = new Intent(getActivity(), TransactionActivity.class);
-                            intent.putExtra("friend_name", userList.get(position).getFullName());
+                            intent.putExtra("friend_name", userList.get(position)
+                                    .getFullName());
                             startActivity(intent);
                         })
         );
@@ -102,8 +104,6 @@ public class PersonalFragment extends Fragment {
 
         myDialog = new Dialog(getActivity());
         fab.setOnClickListener(view12 -> popAddFriend());
-
-
         observeViewModel();
 
         return view;

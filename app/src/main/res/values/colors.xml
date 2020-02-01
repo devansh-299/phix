@@ -10,5 +10,7 @@
     <color name="material_blue">#6C63FF</color>
     <color name="white">#FFFFFF</color>
     <color name="material_grey">#ffcdd2</color>
+    <color name="material_red">#d32f2f</color>
+    <color name="material_green">#4CAF50</color>
 
 </resources>

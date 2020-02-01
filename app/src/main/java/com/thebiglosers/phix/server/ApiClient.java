@@ -1,10 +1,10 @@
 package com.thebiglosers.phix.server;
 
+import com.thebiglosers.phix.model.HomeDataModel;
 import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.model.User;
 
 import java.util.List;
-
 import io.reactivex.Single;
 
 import retrofit2.Retrofit;
@@ -15,8 +15,9 @@ public class ApiClient {
 
     private TransactionApi transactionApi;
     private UserApi userApi;
+    private HomeDataApi homeDataApi;
     private static Retrofit retrofitInstance = null;
-    private static final String BASE_URL = "https://9ed4cda2.ngrok.io/";
+    private static final String BASE_URL = "https://32a92c3b.ngrok.io/";
 
 
     public ApiClient() {
@@ -33,6 +34,22 @@ public class ApiClient {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
                 .create(UserApi.class);
+        homeDataApi = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
+                .create(HomeDataApi.class);
+    }
+
+    public static Retrofit getClient() {
+        if (retrofitInstance == null) {
+            retrofitInstance = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofitInstance;
     }
 
 
@@ -40,8 +57,8 @@ public class ApiClient {
         return BASE_URL;
     }
 
-    public Single<List<User>> getUser() {
-        return userApi.getUser();
+    public Single<List<User>> getUser(String userName) {
+        return userApi.getUser(userName);
     }
 
     public Single<List<Transaction>> getTransaction() {
@@ -51,4 +68,9 @@ public class ApiClient {
     public Single<User> getFriend(String searchQuery) {
         return userApi.getFriend(searchQuery);
     }
+
+    public Single<HomeDataModel> getHomeData(String userName) {
+        return homeDataApi.getData(userName);
+    }
+
 }

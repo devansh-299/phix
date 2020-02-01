@@ -10,23 +10,32 @@ import butterknife.ButterKnife;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.view.adapter.TransactionAdapter;
+import com.thebiglosers.phix.view.fragment.PersonalFragment;
 import com.thebiglosers.phix.viewmodel.TransactionViewModel;
 
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 public class TransactionActivity extends AppCompatActivity {
@@ -39,6 +48,10 @@ public class TransactionActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_friend_name)
     TextView tvFriendName;
+
+    @BindView(R.id.iv_friend)
+    ImageView ivFriend;
+
 
     @BindView(R.id.loading_layout)
     LinearLayout loadingLayout;
@@ -68,6 +81,20 @@ public class TransactionActivity extends AppCompatActivity {
         if (getIntent().getStringExtra("friend_name")!= null) {
             tvFriendName.setText(getIntent().getStringExtra("friend_name"));
         }
+        if (getIntent().getStringExtra("friend_image")!= null){
+
+            RequestOptions options = new RequestOptions()
+                    .centerCrop()
+                    .circleCrop()
+                    .placeholder(R.drawable.splash_icon)
+                    .error(R.drawable.splash_icon)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .priority(Priority.IMMEDIATE);
+
+            Glide.with(this).load(getIntent().getStringExtra("friend_image"))
+                    .apply(options)
+                    .into(ivFriend);
+        }
 
         mAdapter = new TransactionAdapter(transactionList);
 
@@ -91,16 +118,7 @@ public class TransactionActivity extends AppCompatActivity {
 
         fab.setOnClickListener(view -> popUpAddTransaction());
 
-        // for temporary data
-        makeTransactions();
-
         observeViewModel();
-    }
-
-    private void makeTransactions() {
-        Transaction transaction = new Transaction((float)20.00, "Coke", "31/01/2020");
-        transactionList.add(transaction);
-        mAdapter.notifyDataSetChanged();
     }
 
     private void observeViewModel() {
