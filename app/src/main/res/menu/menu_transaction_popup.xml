@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/you_owe"
+        android:title="You owe the full amount"/>
+
+    <item
+        android:id="@+id/split_half"
+        android:title="Split the amount in half"/>
+
+</menu>

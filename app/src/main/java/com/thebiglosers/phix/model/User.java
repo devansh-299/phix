@@ -9,11 +9,15 @@ public class User {
     @SerializedName("image_string")
     String imageString;
 
-    @SerializedName("full_name")
+    @SerializedName("get_full_name")
     String fullName;
 
     @SerializedName("email")
     String email;
+
+    public String getUpiString() {
+        return upiString;
+    }
 
     @SerializedName("upi_id")
     String upiString;

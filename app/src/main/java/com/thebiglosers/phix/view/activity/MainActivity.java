@@ -20,6 +20,7 @@ import com.thebiglosers.phix.view.fragment.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+
     String userName;
     String userImage;
     String uniqueUserName;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     active[0] = personalFragment;
                     return true;
                 case R.id.action_nearby:
+
                     fm.beginTransaction().hide(active[0]).show(groupFragment).commit();
                     active[0] =groupFragment;
                     return true;
@@ -109,4 +111,10 @@ public class MainActivity extends AppCompatActivity {
         return userImage;
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
+    }
 }

@@ -16,7 +16,7 @@ import retrofit2.http.Url;
 
 public interface UserApi {
 
-    @GET("friends/{user_name}")
+    @GET("friends/{user_name}/")
     Single<List<User>> getUser(@Path("user_name") String user_name);
 
     @GET

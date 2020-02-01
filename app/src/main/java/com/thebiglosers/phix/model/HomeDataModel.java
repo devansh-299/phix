@@ -5,23 +5,23 @@ import java.util.Map;
 
 public class HomeDataModel {
 
-    int todaysExpense;
+    float todaysExpense;
 
-    int monthsExpense;
+    float monthsExpense;
 
     Map<Integer, Integer> data = new HashMap<Integer, Integer>();
 
-    public HomeDataModel(int todaysExpense, int monthsExpense, Map<Integer, Integer> data) {
+    public HomeDataModel(float todaysExpense, float monthsExpense, Map<Integer, Integer> data) {
         this.todaysExpense = todaysExpense;
         this.monthsExpense = monthsExpense;
         this.data = data;
     }
 
-    public int getTodaysExpense() {
+    public float getTodaysExpense() {
         return todaysExpense;
     }
 
-    public int getMonthsExpense() {
+    public float getMonthsExpense() {
         return monthsExpense;
     }
 

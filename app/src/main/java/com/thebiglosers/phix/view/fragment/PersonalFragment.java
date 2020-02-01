@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebiglosers.phix.R;
@@ -35,12 +35,13 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
-public class PersonalFragment extends Fragment {
+public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.rv_Transactions)
     RecyclerView rvUsers;
@@ -51,8 +52,11 @@ public class PersonalFragment extends Fragment {
     @BindView(R.id.loading_layout)
     LinearLayout loadingLayout;
 
-    @BindView(R.id.error_layout)
+    @BindView(R.id.error_layout_personal)
     LinearLayout errorLayout;
+
+    @BindView(R.id.swipe_container)
+    SwipeRefreshLayout swipeRefreshLayout;
 
 
     private List<User> userList = new ArrayList<>();
@@ -79,6 +83,8 @@ public class PersonalFragment extends Fragment {
         rvUsers.setItemAnimator(new DefaultItemAnimator());
         rvUsers.setAdapter(mAdapter);
 
+        swipeRefreshLayout.setOnRefreshListener(this);
+
 
         rvUsers.addOnItemTouchListener(
                 new RecyclerItemClickListener(getApplicationContext(),
@@ -86,6 +92,12 @@ public class PersonalFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), TransactionActivity.class);
                             intent.putExtra("friend_name", userList.get(position)
                                     .getFullName());
+                            intent.putExtra("friendUPIID",
+                                    userList.get(position).getUpiString());
+                            intent.putExtra("friendFullName",userList.get(position)
+                            .getFullName());
+                            intent.putExtra("friend_unique_username",userList.get(position)
+                            .getName());
                             startActivity(intent);
                         })
         );
@@ -115,6 +127,7 @@ public class PersonalFragment extends Fragment {
             if (userParemeter != null && userParemeter instanceof List) {
                 rvUsers.setVisibility(View.VISIBLE);
                 mAdapter.updateImageList(userParemeter);
+                swipeRefreshLayout.setRefreshing(false);
                 errorLayout.setVisibility(View.GONE);
                 loadingLayout.setVisibility(View.GONE);
                 fab.setVisibility(View.VISIBLE);
@@ -122,13 +135,7 @@ public class PersonalFragment extends Fragment {
         });
 
         viewModel.imageLoadError.observe(this, isError -> {
-            if (isError != null && isError instanceof Boolean) {
-                Toast.makeText(getActivity(), "Error getting Friends", Toast.LENGTH_SHORT).show();
-                errorLayout.setVisibility(View.VISIBLE);
-                loadingLayout.setVisibility(View.GONE);
-                //fab.setVisibility(View.GONE);
-            }
-
+            if (isError != null && isError instanceof Boolean) { }
         });
 
         viewModel.loading.observe(this, isLoading -> {
@@ -138,10 +145,14 @@ public class PersonalFragment extends Fragment {
                     rvUsers.setVisibility(View.GONE);
                     loadingLayout.setVisibility(View.VISIBLE);
                     errorLayout.setVisibility(View.GONE);
-                    fab.setVisibility(View.GONE);
                 }
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        viewModel.refresh(((MainActivity) getActivity()).getUniqueUserName());
     }
 
 
@@ -156,7 +167,8 @@ public class PersonalFragment extends Fragment {
 
         public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
             mListener = listener;
-            mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            mGestureDetector = new GestureDetector(context,
+                    new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
                     return true;
@@ -207,9 +219,9 @@ public class PersonalFragment extends Fragment {
 
         btSearchFriend.setOnClickListener(view -> {
             String friendName  = etFriendName.getText().toString();
-            viewModel.fetchFriend(friendName);
+            viewModel.fetchFriend(friendName,((MainActivity) getActivity()).getUniqueUserName());
 
-            viewModel.friend.observe(this, friendParameter -> {
+            viewModel.friend.observe(getActivity(), friendParameter -> {
                 if (friendParameter != null && friendParameter instanceof User) {
                     rvUsers.setVisibility(View.VISIBLE);
                     foundFrienName.setText(friendParameter.getFullName());
@@ -218,7 +230,7 @@ public class PersonalFragment extends Fragment {
                 }
             });
 
-            viewModel.imageLoadError.observe(this, isError -> {
+            viewModel.imageLoadError.observe(getActivity(), isError -> {
                 if (isError != null && isError instanceof Boolean) {
                     foundFrienName.setText("No user found!");
                     searhcLayout.setVisibility(View.GONE);

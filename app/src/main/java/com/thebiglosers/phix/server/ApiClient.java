@@ -5,6 +5,8 @@ import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.model.User;
 
 import java.util.List;
+
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import retrofit2.Retrofit;
@@ -17,7 +19,7 @@ public class ApiClient {
     private UserApi userApi;
     private HomeDataApi homeDataApi;
     private static Retrofit retrofitInstance = null;
-    private static final String BASE_URL = "https://32a92c3b.ngrok.io/";
+    private static final String BASE_URL = "https://15ad2c3c.ngrok.io/";
 
 
     public ApiClient() {
@@ -61,8 +63,8 @@ public class ApiClient {
         return userApi.getUser(userName);
     }
 
-    public Single<List<Transaction>> getTransaction() {
-        return transactionApi.getTransaction();
+    public Single<List<Transaction>> getTransaction(String mUserName, String friendUserName) {
+        return transactionApi.getTransaction(mUserName, friendUserName);
     }
 
     public Single<User> getFriend(String searchQuery) {
@@ -73,4 +75,7 @@ public class ApiClient {
         return homeDataApi.getData(userName);
     }
 
+    public Single<List<Transaction>> getAllTransaction(String uniqueUserName) {
+        return transactionApi.getAllTransactions(uniqueUserName);
+    }
 }

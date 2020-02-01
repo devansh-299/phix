@@ -71,9 +71,9 @@ public class UserViewModel extends AndroidViewModel {
     }
 
 
-    public void fetchFriend(String friendUserName) {
+    public void fetchFriend(String friendUserName, String mUniqueUserName) {
         disposable.add(
-                apiClient.getFriend("check/"+friendUserName)
+                apiClient.getFriend("friend/"+mUniqueUserName+"/"+friendUserName)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<User>() {

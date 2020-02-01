@@ -12,9 +12,8 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.thebiglosers.phix.R;
-import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.model.User;
-import com.thebiglosers.phix.view.activity.MainActivity;
+
 
 import java.util.List;
 import androidx.recyclerview.widget.RecyclerView;

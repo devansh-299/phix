@@ -20,6 +20,7 @@ import io.reactivex.schedulers.Schedulers;
 public class TransactionViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<Transaction>> mTransactions = new MutableLiveData<>();
+    public MutableLiveData<List<Transaction>> mAllTransactions = new MutableLiveData<>();
     public MutableLiveData<Boolean> imageLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
@@ -32,15 +33,17 @@ public class TransactionViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public void refresh() {
-        fetchFromRemote();
+    public void refresh(String mUniqueUserId, String friendUniqueId) {
+        fetchFromRemote(mUniqueUserId,friendUniqueId);
     }
 
-    private void fetchFromRemote() {
+
+
+    private void fetchFromRemote(String mUniqueUserId, String friendUniqueId) {
         loading.setValue(true);
         disposable.add(
 
-                apiClient.getTransaction()
+                apiClient.getTransaction(mUniqueUserId, friendUniqueId)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<List<Transaction>>() {
@@ -66,5 +69,39 @@ public class TransactionViewModel extends AndroidViewModel {
         imageLoadError.setValue(false);
         loading.setValue(false);
     }
+    private void allTransactionsRetrived(List<Transaction> transactions) {
+        mAllTransactions.setValue(transactions);
+        imageLoadError.setValue(false);
+        loading.setValue(false);
+    }
 
+    public void refresh1(String uniqueUserName) {
+            fetchAllFromRemote(uniqueUserName);
+    }
+
+    private void fetchAllFromRemote(String uniqueUserName) {
+
+        loading.setValue(true);
+        disposable.add(
+
+                apiClient.getAllTransaction(uniqueUserName)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Transaction>>() {
+
+                            @Override
+                            public void onSuccess(List<Transaction> transactions) {
+                                Toast.makeText(getApplication(), "Data retrieved from Server",
+                                        Toast.LENGTH_SHORT).show();
+                                allTransactionsRetrived(transactions);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loading.setValue(false);
+                                Log.e("ERROR",e.getMessage());
+                                imageLoadError.setValue(true);
+                            }
+                        }));
+    }
 }

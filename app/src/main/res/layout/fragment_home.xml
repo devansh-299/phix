@@ -7,6 +7,12 @@
     android:background="@color/material_blue"
     tools:context=".view.fragment.HomeFragment">
 
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -105,6 +111,16 @@
                             android:textSize="24dp"
                             android:textStyle="bold" />
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="₹"
+                                android:layout_marginRight="10dp"
+                                android:textColor="@color/material_red"
+                                android:textSize="24dp"
+                                android:textStyle="bold" />
+
                         <TextView
                             android:id="@+id/tv_todays_expense"
                             android:layout_width="0dp"
@@ -124,16 +140,29 @@
                             android:layout_height="match_parent"
                             android:orientation="horizontal">
 
+
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
                             android:layout_marginTop="10dp"
                             android:layout_weight="1"
-                            android:text="Months's Expense"
+                            android:text="Month's Expense"
                             android:textColor="@color/material_blue"
                             android:textSize="24dp"
                             android:textStyle="bold" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="₹"
+                                android:layout_marginRight="10dp"
+                                android:textColor="@color/material_red"
+                                android:textSize="24dp"
+                                android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_monthly_expense"
@@ -176,5 +205,7 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

@@ -1,14 +1,13 @@
 package com.thebiglosers.phix.view.fragment;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,14 +35,13 @@ import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.HomeDataModel;
 import com.thebiglosers.phix.view.activity.MainActivity;
-import com.thebiglosers.phix.view.activity.PaymentActivity;
 import com.thebiglosers.phix.viewmodel.HomeDataViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     @BindView(R.id.iv_user_image)
     ImageView ivUserImage;
@@ -69,6 +67,9 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.iv_error)
     ImageView ivErrorImage;
 
+    @BindView(R.id.swipe_container)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     private HomeDataViewModel viewModel;
 
     @Override
@@ -84,7 +85,7 @@ public class HomeFragment extends Fragment {
         shimmerRecyclerView.showShimmerAdapter();
         layoutHomeData.setVisibility(View.GONE);
 
-
+        swipeRefreshLayout.setOnRefreshListener(this);
         setUserData();
         observeViewModel();
         return view;
@@ -100,8 +101,10 @@ public class HomeFragment extends Fragment {
                 layoutHomeData.setVisibility(View.VISIBLE);
                 ivErrorImage.setVisibility(View.GONE);
 
-                tvMonthsExpense.setText(Integer.toString(dataParameter.getMonthsExpense()));
-                tvTodayExpense.setText(Integer.toString(dataParameter.getTodaysExpense()));
+                swipeRefreshLayout.setRefreshing(false);
+
+                tvMonthsExpense.setText(Float.toString(dataParameter.getMonthsExpense()));
+                tvTodayExpense.setText(Float.toString(dataParameter.getTodaysExpense()));
                 setUpGraph(dataParameter.getData());
             }
         });
@@ -109,7 +112,7 @@ public class HomeFragment extends Fragment {
         viewModel.imageLoadError.observe(this, isError -> {
             if (isError != null && isError instanceof Boolean){
                 shimmerRecyclerView.setVisibility(View.GONE);
-                layoutHomeData.setVisibility(View.GONE);
+                //layoutHomeData.setVisibility(View.GONE);
             }
 
         });
@@ -178,8 +181,7 @@ public class HomeFragment extends Fragment {
 
             areaChart.interactivity().hoverMode(HoverMode.BY_X);
             areaChart.tooltip()
-                    .valuePrefix("$")
-                    .valuePostfix(" bln.")
+                    .valuePrefix("₹")
                     .displayMode(TooltipDisplayMode.UNION);
 
             mGraph.setChart(areaChart);
@@ -191,8 +193,14 @@ public class HomeFragment extends Fragment {
                 .centerCrop()
                 .circleCrop()
                 .into(ivUserImage);
-        Toast.makeText(getActivity(),((MainActivity) getActivity()).getUserName(), Toast.LENGTH_SHORT ).show();
+        Toast.makeText(getActivity(),((MainActivity) getActivity()).getUserName(),
+                Toast.LENGTH_SHORT ).show();
         tvUserName.setText(((MainActivity) getActivity()).getUserName());
+    }
+
+    @Override
+    public void onRefresh() {
+        viewModel.refresh(((MainActivity) getActivity()).getUniqueUserName());
     }
 
     private class CustomDataEntry extends ValueDataEntry {

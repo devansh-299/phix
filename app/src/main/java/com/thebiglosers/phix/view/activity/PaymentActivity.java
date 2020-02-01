@@ -45,6 +45,16 @@ public class PaymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
         ButterKnife.bind(this);
+
+        if (getIntent().getStringExtra("Amount")!= null) {
+            etAmount.setText(getIntent().getStringExtra("Amount"));
+        }
+        if (getIntent().getStringExtra("friendUpiId")!= null) {
+            etUpiId.setText(getIntent().getStringExtra("friendUpiId"));
+        }
+        if (getIntent().getStringExtra("friendFullName")!= null) {
+            etName.setText(getIntent().getStringExtra("friendFullName"));
+        }
     }
 
 

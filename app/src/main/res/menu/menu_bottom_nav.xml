@@ -5,18 +5,18 @@
         android:id="@+id/action_recents"
         android:enabled="true"
         android:icon="@drawable/ic_assessment"
-        android:title="Home"
+        android:title="Dashboard"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_favorites"
         android:enabled="true"
         android:icon="@drawable/ic_friends"
-        android:title="Personal"
+        android:title="Friends"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_nearby"
         android:enabled="true"
         android:icon="@drawable/ic_history"
-        android:title="Group"
+        android:title="All transactions"
         app:showAsAction="always" />
 </menu>
