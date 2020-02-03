@@ -3,4 +3,30 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome">Welcome</string>
+    <string name="message_signin_successful">Successfully signed in. Welcome!</string>
+    <string name="message_signin_failed">We couldn\'t sign you in. Please try again later.</string>
+    <string name="message_cannot_blank">Cannot leave blank</string>
+    <string name="done">Done</string>
+    <string name="pass">PASS</string>
+    <string name="status_code">Status Code:</string>
+    <string name="fail">FAIL</string>
+    <string name="error">Error:</string>
+    <string name="intro_one_title">Welcome to Phix</string>
+    <string name="intro_one_desc">Your personal money management app</string>
+    <string name="intro_second_title">Fast Transactions</string>
+    <string name="intro_second_desc">Phix helps you settle your bills damn fast!</string>
+    <string name="intro_third_desc">That\'s enough, lets start!</string>
+    <string name="done">Done</string>
+    <string name="preferences">com.thebiglosers.phix</string>
+    <string name="et_error_amount">Enter amount</string>
+    <string name="et_error_name">Enter name</string>
+    <string name="et_error_upi_id">Enter UpiId</string>
+    <string name="pay_with">Pay with</string>
+    <string name="no_upi_app_found">No UPI app found, please install one to continue</string>
+    <string name="transaction_successful">Transaction successful.</string>
+    <string name="payment_no_internet">Internet connection is not available. Please check and try again</string>
+    <string name="transaction_failed">Transaction failed.Please try again</string>
+    <string name="transaction_cancelled_by_user">Payment cancelled by user.</string>
+    <string name="check_first">check_first_time</string>
 </resources>

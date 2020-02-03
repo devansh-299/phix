@@ -5,8 +5,6 @@ import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.model.User;
 
 import java.util.List;
-
-import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import retrofit2.Retrofit;
@@ -19,6 +17,8 @@ public class ApiClient {
     private UserApi userApi;
     private HomeDataApi homeDataApi;
     private static Retrofit retrofitInstance = null;
+
+    //base url used
     private static final String BASE_URL = "https://15ad2c3c.ngrok.io/";
 
 
@@ -36,6 +36,7 @@ public class ApiClient {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
                 .create(UserApi.class);
+
         homeDataApi = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -54,10 +55,6 @@ public class ApiClient {
         return retrofitInstance;
     }
 
-
-    public static String getBaseUrl() {
-        return BASE_URL;
-    }
 
     public Single<List<User>> getUser(String userName) {
         return userApi.getUser(userName);

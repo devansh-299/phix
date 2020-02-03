@@ -1,18 +1,15 @@
 package com.thebiglosers.phix.view.activity;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.view.fragment.PersonalFragment;
 import com.thebiglosers.phix.view.fragment.GroupFragment;
@@ -22,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     String userName;
-    String userImage;
+    String userImageString;
     String uniqueUserName;
 
     SharedPreferences preferences;
@@ -36,16 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        preferences = getSharedPreferences("com.thebiglosers.phix", MODE_PRIVATE);
+        preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
 
-        if (getIntent().getStringExtra("userName")!= null) {
-            setUserName(getIntent().getStringExtra("userName"));
-        }
-        if (getIntent().getStringExtra("userImage")!= null) {
-            setUserImageString(getIntent().getStringExtra("userImage"));
-        }
-        if (getIntent().getStringExtra("userEmail")!=null) {
-            setUniqueUserName(getIntent().getStringExtra("userEmail"));
+        if (getIntent().getStringExtra("userName") != null &&
+        getIntent().getStringExtra("userImage") != null &&
+        getIntent().getStringExtra("userEmail") != null) {
+
+            setUpUser(getIntent().getStringExtra("userName"),
+                    getIntent().getStringExtra("userImage"),
+                    getIntent().getStringExtra("userEmail"));
         }
 
         final Fragment homeFragment = new HomeFragment();
@@ -85,12 +81,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setUniqueUserName(String userEmail) {
+    private void setUpUser(String userName, String userImage, String userEmail) {
+        this.userImageString = userImage;
+        this.userName = userName;
+
         String []arr = userEmail.split("@",2);
-        Log.e("dasdsadsadasd",arr[0]);
+
         uniqueUserName = arr[0];
         preferences.edit().putString("UserUniqueName",uniqueUserName).commit();
+
     }
+
 
     public String getUniqueUserName() { return uniqueUserName;
     }
@@ -103,12 +104,9 @@ public class MainActivity extends AppCompatActivity {
         return userName;
     }
 
-    private void setUserImageString(String currUserImage) {
-        userImage = currUserImage;
-    }
 
     public String getUserImageString () {
-        return userImage;
+        return userImageString;
     }
 
     @Override

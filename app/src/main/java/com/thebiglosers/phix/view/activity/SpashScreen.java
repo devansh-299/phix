@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.thebiglosers.phix.R;
+
 public class SpashScreen extends AppCompatActivity {
 
     SharedPreferences preferences;
@@ -15,13 +17,13 @@ public class SpashScreen extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        preferences = getSharedPreferences("com.thebiglosers.phix", MODE_PRIVATE);
+        preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
 
         Intent intent;
 
-        if (preferences.getBoolean("check_first_time",true)) {
+        if (preferences.getBoolean(getString(R.string.check_first),true)) {
             intent = new Intent(this, IntroductionActivity.class);
-            preferences.edit().putBoolean("check_first_time", false).commit();
+            preferences.edit().putBoolean(getString(R.string.check_first), false).commit();
         } else {
             intent = new Intent(this, FirebaseLogin.class);
         }

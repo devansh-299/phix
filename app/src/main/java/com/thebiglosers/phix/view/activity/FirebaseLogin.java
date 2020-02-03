@@ -6,10 +6,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +22,6 @@ import com.thebiglosers.phix.model.User;
 import com.thebiglosers.phix.server.ApiClient;
 import com.thebiglosers.phix.server.UserApi;
 
-import java.util.ArrayList;
 
 public class FirebaseLogin extends AppCompatActivity {
 
@@ -35,25 +32,24 @@ public class FirebaseLogin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase_login);
 
-
         if(FirebaseAuth.getInstance().getCurrentUser() == null) {
-            startActivityForResult(
-                    AuthUI.getInstance()
+            startActivityForResult(AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .build(),
                     SIGN_IN_REQUEST_CODE
             );
         } else {
             Toast.makeText(this,
-                    "Welcome " + FirebaseAuth.getInstance()
+                    getString(R.string.welcome) + FirebaseAuth.getInstance()
                             .getCurrentUser().getDisplayName(), Toast.LENGTH_LONG).show();
 
             // passing user data
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("userName", user.getDisplayName());
-            intent.putExtra("userImage",user.getPhotoUrl().toString() );
-            intent.putExtra("userEmail",user.getEmail());
+            intent.putExtra("userImage", user.getPhotoUrl().toString() );
+            intent.putExtra("userEmail", user.getEmail());
 
             startActivity(intent);
         }
@@ -64,31 +60,24 @@ public class FirebaseLogin extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case 100:
-                if (resultCode == RESULT_OK && data != null) {
-                    ArrayList<String> result = data.getStringArrayListExtra(
-                            RecognizerIntent.EXTRA_RESULTS);
-                }
-                break;
             case 10:
                 if(requestCode == SIGN_IN_REQUEST_CODE) {
                     if(resultCode == RESULT_OK) {
                         Toast.makeText(this,
-                                "Successfully signed in. Welcome!",
-                                Toast.LENGTH_LONG)
-                                .show();
+                                R.string.message_signin_successful, Toast.LENGTH_LONG).show();
+
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
                         Intent intent = new Intent(this, MainActivity.class);
                         intent.putExtra("userName", user.getDisplayName());
-                        intent.putExtra("userImage",user.getPhotoUrl().toString() );
-                        intent.putExtra("userEmail",user.getEmail());
+                        intent.putExtra("userImage", user.getPhotoUrl().toString() );
+                        intent.putExtra("userEmail", user.getEmail());
 
                         // saving user to database + getting upi
-                        getUpi(user,intent);
+                        getUpi(user, intent);
 
                     } else {
-                        Toast.makeText(this,
-                                "We couldn't sign you in. Please try again later.",
+                        Toast.makeText(this, R.string.message_signin_failed,
                                 Toast.LENGTH_LONG).show();
                         finishAffinity();
                     }
@@ -96,7 +85,8 @@ public class FirebaseLogin extends AppCompatActivity {
         }
     }
 
-    private void getUpi(FirebaseUser user, Intent i) {
+    private void getUpi(FirebaseUser user, Intent intent) {
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.alert_set_upi_id, null);
@@ -104,18 +94,21 @@ public class FirebaseLogin extends AppCompatActivity {
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.et_upi_id);
 
-        dialogBuilder.setPositiveButton("Done", (dialog, whichButton) -> {
+        dialogBuilder.setPositiveButton(getString(R.string.done), (dialog, whichButton) -> {
+
             if (edt.getText().toString().isEmpty()) {
-                edt.setError("Cannot leave blank");
+                edt.setError(getString(R.string.message_cannot_blank));
             } else {
                 User user1 = new User(user.getDisplayName(), user.getPhotoUrl().toString(),
                         user.getEmail(), edt.getText().toString());
 
                 UserApi userApi = ApiClient.getClient().create(UserApi.class);
-                Toast.makeText(this,user.getDisplayName()+
-                        user.getEmail()+user.getPhotoUrl().toString()+edt.getText().toString(),Toast.LENGTH_SHORT).show();
-                Log.e("dasdad", user.getDisplayName()+
-                        user.getEmail()+user.getPhotoUrl().toString()+edt.getText().toString());
+
+                Log.i("LoginInUser", user.getDisplayName()
+                        + user.getEmail()
+                        + user.getPhotoUrl().toString()
+                        + edt.getText().toString());
+
                 Call<User> call = userApi.saveUser(user1);
                 call.enqueue(new Callback<User>() {
                     @Override
@@ -123,20 +116,21 @@ public class FirebaseLogin extends AppCompatActivity {
 
                         int statusCode = response.code();
 
-                        Log.e("PASS", "Status Code: " + statusCode);
-
+                        Log.e(getString(R.string.pass), getString(R.string.status_code)
+                                + statusCode);
                     }
 
                     @Override
                     public void onFailure(retrofit2.Call<User> call, Throwable t) {
-                        Log.e("FAIL", "Error: " + t.toString());
+                        Log.e(getString(R.string.fail), getString(R.string.error)
+                                + t.toString());
                     }
-
                 });
 
-                startActivity(i);
+                startActivity(intent);
             }
         });
+
         AlertDialog b = dialogBuilder.create();
         b.show();
     }

@@ -15,10 +15,6 @@ public class User {
     @SerializedName("email")
     String email;
 
-    public String getUpiString() {
-        return upiString;
-    }
-
     @SerializedName("upi_id")
     String upiString;
 
@@ -37,5 +33,7 @@ public class User {
         return imageString;
     }
 
-    public String getFullName () { return fullName; }
+    public String getFullName() { return fullName; }
+
+    public String getUpiString() { return upiString; }
 }

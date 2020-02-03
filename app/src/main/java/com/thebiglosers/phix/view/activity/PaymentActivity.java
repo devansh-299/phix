@@ -46,13 +46,13 @@ public class PaymentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_payment);
         ButterKnife.bind(this);
 
-        if (getIntent().getStringExtra("Amount")!= null) {
+        if (getIntent().getStringExtra("Amount") != null) {
             etAmount.setText(getIntent().getStringExtra("Amount"));
         }
-        if (getIntent().getStringExtra("friendUpiId")!= null) {
+        if (getIntent().getStringExtra("friendUpiId") != null) {
             etUpiId.setText(getIntent().getStringExtra("friendUpiId"));
         }
-        if (getIntent().getStringExtra("friendFullName")!= null) {
+        if (getIntent().getStringExtra("friendFullName") != null) {
             etName.setText(getIntent().getStringExtra("friendFullName"));
         }
     }
@@ -66,17 +66,18 @@ public class PaymentActivity extends AppCompatActivity {
         String description = etDescription.getText().toString();
 
         if (amount.isEmpty()) {
-            etAmount.setError("Enter amount");
+            etAmount.setError(getString(R.string.et_error_amount));
             return;
         }
         if (name.isEmpty()) {
-            etName.setError("Enter amount");
+            etName.setError(getString(R.string.et_error_name));
             return;
         }
         if (upiId.isEmpty()) {
-            etUpiId.setError("Enter amount");
+            etUpiId.setError(getString(R.string.et_error_upi_id));
             return;
-        }if (description.isEmpty()) {
+        }
+        if (description.isEmpty()) {
             description = " ";
         }
         payUsingUpi(amount, upiId, name, description);
@@ -96,15 +97,14 @@ public class PaymentActivity extends AppCompatActivity {
         Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
         upiPayIntent.setData(uri);
 
-        // will always show a dialog to user to choose an app
-        Intent chooser = Intent.createChooser(upiPayIntent, "Pay with");
+        // app chooser
+        Intent chooser = Intent.createChooser(upiPayIntent, getString(R.string.pay_with));
 
         // check if intent resolves
-        if(null != chooser.resolveActivity(getPackageManager())) {
+        if (null != chooser.resolveActivity(getPackageManager())) {
             startActivityForResult(chooser, UPI_PAYMENT);
         } else {
-            Toast.makeText(this,"No UPI app found, please install one to continue",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_upi_app_found, Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -118,18 +118,15 @@ public class PaymentActivity extends AppCompatActivity {
                 if ((RESULT_OK == resultCode) || (resultCode == 11)) {
                     if (data != null) {
                         String trxt = data.getStringExtra("response");
-                        Log.d("UPI", "onActivityResult: " + trxt);
                         ArrayList<String> dataList = new ArrayList<>();
                         dataList.add(trxt);
                         upiPaymentDataOperation(dataList);
                     } else {
-                        Log.d("UPI", "onActivityResult: " + "Return data is null");
                         ArrayList<String> dataList = new ArrayList<>();
                         dataList.add("nothing");
                         upiPaymentDataOperation(dataList);
                     }
                 } else {
-                    Log.d("UPI", "onActivityResult: " + "Return data is null");
                     //when user simply back without payment
                     ArrayList<String> dataList = new ArrayList<>();
                     dataList.add("nothing");
@@ -142,46 +139,39 @@ public class PaymentActivity extends AppCompatActivity {
     private void upiPaymentDataOperation(ArrayList<String> data) {
         if (isConnectionAvailable(this)) {
             String str = data.get(0);
-            Log.d("UPIPAY", "upiPaymentDataOperation: "+str);
             String paymentCancel = "";
-            if(str == null) str = "discard";
+            if (str == null) str = "discard";
             String status = "";
             String approvalRefNo = "";
             String response[] = str.split("&");
             for (int i = 0; i < response.length; i++) {
                 String equalStr[] = response[i].split("=");
-                if(equalStr.length >= 2) {
+                if (equalStr.length >= 2) {
                     if (equalStr[0].toLowerCase().equals("Status".toLowerCase())) {
                         status = equalStr[1].toLowerCase();
-                    }
-                    else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase()) ||
+                    } else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase()) ||
                             equalStr[0].toLowerCase().equals("txnRef".toLowerCase())) {
                         approvalRefNo = equalStr[1];
                     }
-                }
-                else {
+                } else {
                     paymentCancel = "Payment cancelled by user.";
                 }
             }
 
             if (status.equals("success")) {
                 //Code to handle successful transaction here.
-                Toast.makeText(this, "Transaction successful.",
+                Toast.makeText(this, R.string.transaction_successful,
                         Toast.LENGTH_SHORT).show();
-                Log.d("UPI", "responseStr: "+approvalRefNo);
-            }
-            else if("Payment cancelled by user.".equals(paymentCancel)) {
-                Toast.makeText(this, "Payment cancelled by user.",
+            } else if ("Payment cancelled by user.".equals(paymentCancel)) {
+                Toast.makeText(this, R.string.transaction_cancelled_by_user,
                         Toast.LENGTH_SHORT).show();
-            }
-            else {
-                Toast.makeText(this, "Transaction failed.Please try again",
+            } else {
+                Toast.makeText(this, R.string.transaction_failed,
                         Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(this,
-                    "Internet connection is not available. Please check and try again",
-                    Toast.LENGTH_SHORT).show();
+                    R.string.payment_no_internet, Toast.LENGTH_SHORT).show();
         }
     }
 
