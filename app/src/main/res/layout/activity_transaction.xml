@@ -6,118 +6,121 @@
     android:layout_height="match_parent"
     tools:context=".view.activity.TransactionActivity">
 
-    <LinearLayout
-        android:layout_height="match_parent"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
         android:layout_width="match_parent"
-        android:orientation="vertical">
-
-
-        <LinearLayout
-            android:background="@color/material_blue"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5">
-
-            <TextView
-                android:layout_margin="10dp"
-                android:id="@+id/tv_friend_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Friend Name"
-                android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@drawable/round_divider"
-            android:orientation="vertical"
-            android:layout_weight="2">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/iv_friend"
-                android:src="@drawable/splash_icon"
-                android:layout_width="200dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_height="match_parent"/>
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5">
 
             <LinearLayout
-                android:id="@+id/loading_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/loading_image"/>
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:background="@color/material_blue">
 
                 <TextView
+                    android:id="@+id/tv_friend_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Loading..."
-                    android:textColor="@color/material_blue"
+                    android:layout_margin="10dp"
+                    android:text="Friend Name"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/error_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:background="@drawable/round_divider"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/error_image"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/iv_friend"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:text="Error!"
-                    android:textColor="@color/material_blue"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:layout_margin="15dp"
+                    android:src="@drawable/splash_icon" />
 
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_friend_transaction"
-                android:background="@color/white"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"/>
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                android:background="@color/white">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_add_transaction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:foreground="@drawable/ic_add"
-                android:layout_alignEnd="@+id/rv_friend_transaction"
-                android:layout_alignBottom="@+id/rv_friend_transaction"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                app:fabSize="normal" />
+                <LinearLayout
+                    android:id="@+id/error_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
 
-        </RelativeLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/error_image" />
 
-    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Error!"
+                        android:textColor="@color/material_blue"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/loading_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                        android:id="@+id/shimmer_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:shimmer_demo_angle="20"
+                        app:shimmer_demo_child_count="10"
+                        app:shimmer_demo_grid_child_count="2"
+                        app:shimmer_demo_layout_manager_type="linear_vertical" />
+
+                </androidx.core.widget.NestedScrollView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_friend_transaction"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:background="@color/white" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_add_transaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/rv_friend_transaction"
+                    android:layout_alignBottom="@+id/rv_friend_transaction"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:foreground="@drawable/ic_add"
+                    app:fabSize="normal" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

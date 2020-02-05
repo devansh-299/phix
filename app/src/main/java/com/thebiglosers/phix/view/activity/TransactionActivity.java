@@ -1,11 +1,12 @@
 package com.thebiglosers.phix.view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -14,7 +15,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -36,7 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TransactionActivity extends AppCompatActivity {
+public class TransactionActivity extends AppCompatActivity implements
+        SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.rv_friend_transaction)
     RecyclerView rvFriendTransaction;
@@ -50,12 +51,15 @@ public class TransactionActivity extends AppCompatActivity {
     @BindView(R.id.iv_friend)
     ImageView ivFriend;
 
-
     @BindView(R.id.loading_layout)
-    LinearLayout loadingLayout;
+    NestedScrollView loadingLayout;
 
     @BindView(R.id.error_layout)
     LinearLayout errorLayout;
+
+
+    @BindView(R.id.swipe_container)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private List<Transaction> transactionList = new ArrayList<>();
     private TransactionAdapter mAdapter;
@@ -70,9 +74,6 @@ public class TransactionActivity extends AppCompatActivity {
 
     SharedPreferences preferences;
 
-    // has no use other than menu inflation
-    private Button button1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +86,7 @@ public class TransactionActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
 
-        loadingLayout.setVisibility(View.GONE);
-        errorLayout.setVisibility(View.GONE);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         if (getIntent().getStringExtra("friend_name") != null) {
             tvFriendName.setText(getIntent().getStringExtra("friend_name"));
@@ -168,36 +168,50 @@ public class TransactionActivity extends AppCompatActivity {
             }
         });
 
+        // for error
         viewModel.imageLoadError.observe(this, isError -> {
             if (isError != null && isError instanceof Boolean) {
-                //Toast.makeText(this, "Error getting Transactions",Toast.LENGTH_SHORT).show();
                 errorLayout.setVisibility(View.VISIBLE);
                 loadingLayout.setVisibility(View.GONE);
-                //fab.setVisibility(View.GONE);
+                rvFriendTransaction.setVisibility(View.GONE);
+                fab.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
+
+            }
+        });
+
+        // for success
+        viewModel.successfullyLoadedTransaction.observe(this, loaded -> {
+            if (loaded != null && loaded instanceof Boolean){
+                errorLayout.setVisibility(View.GONE);
+                loadingLayout.setVisibility(View.GONE);
+                rvFriendTransaction.setVisibility(View.VISIBLE);
+                fab.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setRefreshing(false);
             }
 
         });
 
+
         viewModel.loading.observe(this, isLoading -> {
             if (isLoading != null && isLoading instanceof Boolean) {
-                //loadingView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 if (isLoading) {
-                    //listError.setVisibility(View.GONE);
-                    rvFriendTransaction.setVisibility(View.GONE);
-                    loadingLayout.setVisibility(View.VISIBLE);
                     errorLayout.setVisibility(View.GONE);
+                    loadingLayout.setVisibility(View.VISIBLE);
+                    rvFriendTransaction.setVisibility(View.GONE);
                     fab.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
     }
 
-
     public void popUpAddTransaction() {
-
         myDialog.setContentView(R.layout.popup_transaction);
-
-
     }
 
+    @Override
+    public void onRefresh() {
+        viewModel.refresh(mUniqueUserName, friendUniqueUserName);
+    }
 }

@@ -22,6 +22,9 @@ public class UserViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<User>> mUser = new MutableLiveData<>();
     public MutableLiveData<Boolean> imageLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> successfullyLoaded = new MutableLiveData<>();
+    public MutableLiveData<Boolean> foundFriend = new MutableLiveData<>();
+    public MutableLiveData<Boolean> friendNotFound = new MutableLiveData<>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
     public MutableLiveData<User> friend = new MutableLiveData<>();
@@ -66,6 +69,7 @@ public class UserViewModel extends AndroidViewModel {
 
     private void usersRetrieved(List<User> users) {
         mUser.setValue(users);
+        successfullyLoaded.setValue(true);
         imageLoadError.setValue(false);
         loading.setValue(false);
     }
@@ -83,6 +87,7 @@ public class UserViewModel extends AndroidViewModel {
                                 Toast.makeText(getApplication(), "Found",
                                         Toast.LENGTH_SHORT).show();
                                 Log.e("Positive","GOT FRIEND");
+                                foundFriend.setValue(true);
                                 friend.setValue(mfriend);
                             }
 
@@ -90,7 +95,7 @@ public class UserViewModel extends AndroidViewModel {
                             public void onError(Throwable e) {
                                 loading.setValue(false);
                                 Log.e("Friend ERROR",e.getMessage());
-                                imageLoadError.setValue(true);
+                                friendNotFound.setValue(true);
                             }
                         }));
     }

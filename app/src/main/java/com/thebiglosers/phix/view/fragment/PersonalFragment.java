@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,6 +29,7 @@ import com.thebiglosers.phix.viewmodel.UserViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -50,7 +50,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
     FloatingActionButton fab;
 
     @BindView(R.id.loading_layout)
-    LinearLayout loadingLayout;
+    NestedScrollView loadingLayout;
 
     @BindView(R.id.error_layout_personal)
     LinearLayout errorLayout;
@@ -130,14 +130,34 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
                 swipeRefreshLayout.setRefreshing(false);
                 errorLayout.setVisibility(View.GONE);
                 loadingLayout.setVisibility(View.GONE);
-                fab.setVisibility(View.VISIBLE);
+
             }
         });
 
+        // for error
         viewModel.imageLoadError.observe(this, isError -> {
-            if (isError != null && isError instanceof Boolean) { }
+            if (isError != null && isError instanceof Boolean) {
+                loadingLayout.setVisibility(View.GONE);
+                rvUsers.setVisibility(View.GONE);
+                errorLayout.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setRefreshing(false);
+                fab.setVisibility(View.GONE);
+            }
         });
 
+        // for success
+        viewModel.successfullyLoaded.observe(this, loaded -> {
+            if (loaded != null && loaded instanceof Boolean){
+                loadingLayout.setVisibility(View.GONE);
+                rvUsers.setVisibility(View.VISIBLE);
+                errorLayout.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
+                fab.setVisibility(View.VISIBLE);
+            }
+
+        });
+
+        // in progress
         viewModel.loading.observe(this, isLoading -> {
             if (isLoading != null && isLoading instanceof Boolean) {
                 //loadingView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
@@ -145,6 +165,8 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
                     rvUsers.setVisibility(View.GONE);
                     loadingLayout.setVisibility(View.VISIBLE);
                     errorLayout.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(true);
+                    fab.setVisibility(View.GONE);
                 }
             }
         });
@@ -223,14 +245,23 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
 
             viewModel.friend.observe(getActivity(), friendParameter -> {
                 if (friendParameter != null && friendParameter instanceof User) {
-                    rvUsers.setVisibility(View.VISIBLE);
                     foundFrienName.setText(friendParameter.getFullName());
                     searhcLayout.setVisibility(View.GONE);
                     searchAgainLayout.setVisibility(View.VISIBLE);
                 }
             });
 
-            viewModel.imageLoadError.observe(getActivity(), isError -> {
+            // for success
+            viewModel.foundFriend.observe(this, loaded -> {
+                if (loaded != null && loaded instanceof Boolean){
+                    searhcLayout.setVisibility(View.GONE);
+                    searchAgainLayout.setVisibility(View.VISIBLE);
+                }
+
+            });
+
+            // for error
+            viewModel.friendNotFound.observe(getActivity(), isError -> {
                 if (isError != null && isError instanceof Boolean) {
                     foundFrienName.setText("No user found!");
                     searhcLayout.setVisibility(View.GONE);

@@ -22,6 +22,8 @@ public class TransactionViewModel extends AndroidViewModel {
     public MutableLiveData<List<Transaction>> mTransactions = new MutableLiveData<>();
     public MutableLiveData<List<Transaction>> mAllTransactions = new MutableLiveData<>();
     public MutableLiveData<Boolean> imageLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> successfullyLoadedAllTransactions = new MutableLiveData<>();
+    public MutableLiveData<Boolean> successfullyLoadedTransaction = new MutableLiveData<>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
     private ApiClient apiClient = new ApiClient();
@@ -36,7 +38,6 @@ public class TransactionViewModel extends AndroidViewModel {
     public void refresh(String mUniqueUserId, String friendUniqueId) {
         fetchFromRemote(mUniqueUserId,friendUniqueId);
     }
-
 
 
     private void fetchFromRemote(String mUniqueUserId, String friendUniqueId) {
@@ -66,11 +67,13 @@ public class TransactionViewModel extends AndroidViewModel {
 
     private void transactionsRetrived(List<Transaction> transactions) {
         mTransactions.setValue(transactions);
+        successfullyLoadedTransaction.setValue(true);
         imageLoadError.setValue(false);
         loading.setValue(false);
     }
     private void allTransactionsRetrived(List<Transaction> transactions) {
         mAllTransactions.setValue(transactions);
+        successfullyLoadedAllTransactions.setValue(true);
         imageLoadError.setValue(false);
         loading.setValue(false);
     }

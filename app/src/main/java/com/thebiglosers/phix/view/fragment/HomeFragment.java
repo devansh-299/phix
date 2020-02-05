@@ -97,33 +97,42 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         viewModel.mData.observe(getActivity(), dataParameter -> {
             if(dataParameter!=null && dataParameter instanceof HomeDataModel){
 
-                shimmerRecyclerView.setVisibility(View.GONE);
-                layoutHomeData.setVisibility(View.VISIBLE);
-                ivErrorImage.setVisibility(View.GONE);
-
-                swipeRefreshLayout.setRefreshing(false);
-
                 tvMonthsExpense.setText(Float.toString(dataParameter.getMonthsExpense()));
                 tvTodayExpense.setText(Float.toString(dataParameter.getTodaysExpense()));
                 setUpGraph(dataParameter.getData());
             }
         });
 
+        // for error
         viewModel.imageLoadError.observe(this, isError -> {
             if (isError != null && isError instanceof Boolean){
                 shimmerRecyclerView.setVisibility(View.GONE);
-                //layoutHomeData.setVisibility(View.GONE);
+                layoutHomeData.setVisibility(View.GONE);
+                ivErrorImage.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setRefreshing(false);
             }
 
         });
 
+        // for success
+        viewModel.successfullyLoaded.observe(this, loaded -> {
+            if (loaded != null && loaded instanceof Boolean){
+                shimmerRecyclerView.setVisibility(View.GONE);
+                layoutHomeData.setVisibility(View.VISIBLE);
+                ivErrorImage.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+        });
+
+        // for in progress
         viewModel.loading.observe(getActivity(), isLoading -> {
             if(isLoading!= null  && isLoading instanceof Boolean){
-                //loadingView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 if(isLoading){
-                    layoutHomeData.setVisibility(View.GONE);
                     shimmerRecyclerView.setVisibility(View.VISIBLE);
-                    ivErrorImage.setVisibility(View.VISIBLE);
+                    layoutHomeData.setVisibility(View.GONE);
+                    ivErrorImage.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });

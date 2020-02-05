@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_margin="5dp"
+    android:layout_margin="2.5dp"
     android:layout_height="100dp"
     android:background="@drawable/item_round_background"
     android:orientation="horizontal">
@@ -24,7 +24,7 @@
         android:layout_weight="2"
         android:text="Name"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/material_blue"
         android:textSize="24sp" />
 
 

@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.LinearLayout;
+
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.Transaction;
 
@@ -39,7 +41,7 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     RecyclerView rvUsers;
 
     @BindView(R.id.loading_layout)
-    LinearLayout loadingLayout;
+    ShimmerRecyclerView loadingLayout;
 
     @BindView(R.id.error_layout_personal)
     LinearLayout errorLayout;
@@ -92,16 +94,35 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             }
         });
 
+        // for error
         viewModel.imageLoadError.observe(getActivity(), isError -> {
-            if (isError != null && isError instanceof Boolean) { }
+            if (isError != null && isError instanceof Boolean) {
+                rvUsers.setVisibility(View.GONE);
+                loadingLayout.setVisibility(View.GONE);
+                errorLayout.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setRefreshing(false);
+            }
         });
 
+        // for success
+        viewModel.successfullyLoadedAllTransactions.observe(this, loaded -> {
+            if (loaded != null && loaded instanceof Boolean){
+                rvUsers.setVisibility(View.VISIBLE);
+                loadingLayout.setVisibility(View.GONE);
+                errorLayout.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+        });
+
+        // for loading
         viewModel.loading.observe(getActivity(), isLoading -> {
             if (isLoading != null && isLoading instanceof Boolean) {
                 if (isLoading) {
                     rvUsers.setVisibility(View.GONE);
                     loadingLayout.setVisibility(View.VISIBLE);
                     errorLayout.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });

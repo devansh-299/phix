@@ -23,6 +23,7 @@ public class HomeDataViewModel extends AndroidViewModel {
 
     public MutableLiveData<HomeDataModel> mData = new MutableLiveData<>();
     public MutableLiveData<Boolean> imageLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> successfullyLoaded = new MutableLiveData<>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
     private ApiClient apiClient = new ApiClient();
@@ -51,7 +52,7 @@ public class HomeDataViewModel extends AndroidViewModel {
                             public void onSuccess(HomeDataModel data) {
                                 Toast.makeText(getApplication(), "Data retrieved from Server",
                                         Toast.LENGTH_SHORT).show();
-                                Log.e("YOUO","|||||||");
+                                Log.e("SUCCESS", "HomeDataLoaded");
                                 homeDataRetrieved(data);
                             }
 
@@ -66,6 +67,7 @@ public class HomeDataViewModel extends AndroidViewModel {
 
     private void homeDataRetrieved(HomeDataModel dataModel) {
         mData.setValue(dataModel);
+        successfullyLoaded.setValue(true);
         imageLoadError.setValue(false);
         loading.setValue(false);
     }

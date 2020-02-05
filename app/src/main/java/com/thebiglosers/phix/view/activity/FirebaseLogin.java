@@ -88,6 +88,8 @@ public class FirebaseLogin extends AppCompatActivity {
     private void getUpi(FirebaseUser user, Intent intent) {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setCancelable(false);
+
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.alert_set_upi_id, null);
         dialogBuilder.setView(dialogView);
@@ -96,8 +98,8 @@ public class FirebaseLogin extends AppCompatActivity {
 
         dialogBuilder.setPositiveButton(getString(R.string.done), (dialog, whichButton) -> {
 
-            if (edt.getText().toString().isEmpty()) {
-                edt.setError(getString(R.string.message_cannot_blank));
+            if (edt.getText().toString().equals("")) {
+                // fix required
             } else {
                 User user1 = new User(user.getDisplayName(), user.getPhotoUrl().toString(),
                         user.getEmail(), edt.getText().toString());
