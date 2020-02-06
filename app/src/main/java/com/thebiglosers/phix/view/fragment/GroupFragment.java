@@ -96,7 +96,7 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         // for error
         viewModel.imageLoadError.observe(getActivity(), isError -> {
-            if (isError != null && isError instanceof Boolean) {
+            if (isError != null && isError == true) {
                 rvUsers.setVisibility(View.GONE);
                 loadingLayout.setVisibility(View.GONE);
                 errorLayout.setVisibility(View.VISIBLE);
@@ -106,7 +106,7 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         // for success
         viewModel.successfullyLoadedAllTransactions.observe(this, loaded -> {
-            if (loaded != null && loaded instanceof Boolean){
+            if (loaded != null && loaded == true){
                 rvUsers.setVisibility(View.VISIBLE);
                 loadingLayout.setVisibility(View.GONE);
                 errorLayout.setVisibility(View.GONE);

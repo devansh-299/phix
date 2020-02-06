@@ -96,7 +96,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         viewModel.mData.observe(getActivity(), dataParameter -> {
             if(dataParameter!=null && dataParameter instanceof HomeDataModel){
-
                 tvMonthsExpense.setText(Float.toString(dataParameter.getMonthsExpense()));
                 tvTodayExpense.setText(Float.toString(dataParameter.getTodaysExpense()));
                 setUpGraph(dataParameter.getData());
@@ -105,10 +104,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         // for error
         viewModel.imageLoadError.observe(this, isError -> {
-            if (isError != null && isError instanceof Boolean){
+            if (isError != null && isError == true){
                 shimmerRecyclerView.setVisibility(View.GONE);
                 layoutHomeData.setVisibility(View.GONE);
-                ivErrorImage.setVisibility(View.VISIBLE);
+                mGraph.setVisibility(View.GONE);
+                ivErrorImage.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
             }
 
@@ -116,9 +116,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         // for success
         viewModel.successfullyLoaded.observe(this, loaded -> {
-            if (loaded != null && loaded instanceof Boolean){
+            if (loaded != null && loaded == true){
                 shimmerRecyclerView.setVisibility(View.GONE);
                 layoutHomeData.setVisibility(View.VISIBLE);
+                mGraph.setVisibility(View.VISIBLE);
                 ivErrorImage.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -131,6 +132,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 if(isLoading){
                     shimmerRecyclerView.setVisibility(View.VISIBLE);
                     layoutHomeData.setVisibility(View.GONE);
+                    mGraph.setVisibility(View.GONE);
                     ivErrorImage.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(true);
                 }

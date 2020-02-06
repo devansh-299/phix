@@ -142,7 +142,8 @@ public class TransactionActivity extends AppCompatActivity implements
                 new PersonalFragment.RecyclerItemClickListener(getApplicationContext(),
                         (view1, position) -> {
                             Intent intent = new Intent(this, PaymentActivity.class);
-                            intent.putExtra("Amount", transactionList.get(position).getAmount());
+                            intent.putExtra("Amount",
+                                    Float.toString(transactionList.get(position).getAmount()));
                             intent.putExtra("friendUpiId", friendUpiId);
                             intent.putExtra("friendFullName", friendFullName);
                             startActivity(intent);
@@ -170,7 +171,7 @@ public class TransactionActivity extends AppCompatActivity implements
 
         // for error
         viewModel.imageLoadError.observe(this, isError -> {
-            if (isError != null && isError instanceof Boolean) {
+            if (isError != null && isError == true) {
                 errorLayout.setVisibility(View.VISIBLE);
                 loadingLayout.setVisibility(View.GONE);
                 rvFriendTransaction.setVisibility(View.GONE);
@@ -182,7 +183,7 @@ public class TransactionActivity extends AppCompatActivity implements
 
         // for success
         viewModel.successfullyLoadedTransaction.observe(this, loaded -> {
-            if (loaded != null && loaded instanceof Boolean){
+            if (loaded != null && loaded == true){
                 errorLayout.setVisibility(View.GONE);
                 loadingLayout.setVisibility(View.GONE);
                 rvFriendTransaction.setVisibility(View.VISIBLE);

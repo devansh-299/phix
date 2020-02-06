@@ -130,13 +130,14 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
                 swipeRefreshLayout.setRefreshing(false);
                 errorLayout.setVisibility(View.GONE);
                 loadingLayout.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
 
             }
         });
 
         // for error
         viewModel.imageLoadError.observe(this, isError -> {
-            if (isError != null && isError instanceof Boolean) {
+            if (isError != null && isError == true) {
                 loadingLayout.setVisibility(View.GONE);
                 rvUsers.setVisibility(View.GONE);
                 errorLayout.setVisibility(View.VISIBLE);
@@ -147,7 +148,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         // for success
         viewModel.successfullyLoaded.observe(this, loaded -> {
-            if (loaded != null && loaded instanceof Boolean){
+            if (loaded != null && loaded == true){
                 loadingLayout.setVisibility(View.GONE);
                 rvUsers.setVisibility(View.VISIBLE);
                 errorLayout.setVisibility(View.GONE);
