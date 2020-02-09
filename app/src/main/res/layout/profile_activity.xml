@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/material_blue"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ic_back" />
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="User Profile"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/iv_profile_image"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.1"
+        android:src="@drawable/splash_icon" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="8"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/round_background">
+
+        <TextView
+            android:id="@+id/tv_profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="UserName"
+            android:textColor="@color/material_blue"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_profile_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Registered Email ID" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_mobile_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Mobile Number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_profile_upi_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="UPI ID" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

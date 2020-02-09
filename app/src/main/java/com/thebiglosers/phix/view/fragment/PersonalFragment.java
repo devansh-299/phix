@@ -85,19 +85,17 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         swipeRefreshLayout.setOnRefreshListener(this);
 
-
         rvUsers.addOnItemTouchListener(
                 new RecyclerItemClickListener(getApplicationContext(),
                         (view1, position) -> {
                             Intent intent = new Intent(getActivity(), TransactionActivity.class);
-                            intent.putExtra("friend_name", userList.get(position)
-                                    .getFullName());
-                            intent.putExtra("friendUPIID",
+                            User friendUser = new User (userList.get(position).getFullName(),
+                                    userList.get(position).getImageString(),
+                                    userList.get(position).getEmail(),
                                     userList.get(position).getUpiString());
-                            intent.putExtra("friendFullName",userList.get(position)
-                            .getFullName());
+                            intent.putExtra("selected_friend", friendUser);
                             intent.putExtra("friend_unique_username",userList.get(position)
-                            .getName());
+                                    .getUserName());
                             startActivity(intent);
                         })
         );
@@ -121,6 +119,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         return view;
     }
 
+    @SuppressLint("RestrictedApi")
     private void observeViewModel() {
 
         viewModel.mUser.observe(this, userParemeter -> {
@@ -155,7 +154,6 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
                 swipeRefreshLayout.setRefreshing(false);
                 fab.setVisibility(View.VISIBLE);
             }
-
         });
 
         // in progress

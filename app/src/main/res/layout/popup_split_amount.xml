@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="@color/fui_transparent"
+        android:layout_height="200dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/top_round_popup"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3.5"
+            android:orientation="vertical"
+            android:background="@drawable/bottom_round_popup">
+
+
+            <RadioGroup
+                android:id="@+id/rd_split"
+                android:layout_width="match_parent"
+                android:layout_margin="20dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <RadioButton
+                    android:id="@+id/split_half"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Split in half"/>
+                <RadioButton
+                    android:id="@+id/owe_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You owe the complete amount"/>
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/bt_pay"
+                android:layout_width="150dp"
+                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_button_background"
+                android:layout_gravity="center_horizontal"
+                android:text="Pay"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

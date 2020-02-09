@@ -7,6 +7,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.User;
 import com.thebiglosers.phix.server.ApiClient;
@@ -26,11 +28,14 @@ import com.thebiglosers.phix.server.UserApi;
 public class FirebaseLogin extends AppCompatActivity {
 
     public static int SIGN_IN_REQUEST_CODE = 10;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase_login);
+
+        preferences = getSharedPreferences("com.thebiglosers.phix", MODE_PRIVATE);
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivityForResult(AuthUI.getInstance()
@@ -42,16 +47,7 @@ public class FirebaseLogin extends AppCompatActivity {
             Toast.makeText(this,
                     getString(R.string.welcome) + FirebaseAuth.getInstance()
                             .getCurrentUser().getDisplayName(), Toast.LENGTH_LONG).show();
-
-            // passing user data
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("userName", user.getDisplayName());
-            intent.putExtra("userImage", user.getPhotoUrl().toString() );
-            intent.putExtra("userEmail", user.getEmail());
-
-            startActivity(intent);
+            startActivity(new Intent(this, MainActivity.class));
         }
     }
 
@@ -67,14 +63,7 @@ public class FirebaseLogin extends AppCompatActivity {
                                 R.string.message_signin_successful, Toast.LENGTH_LONG).show();
 
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.putExtra("userName", user.getDisplayName());
-                        intent.putExtra("userImage", user.getPhotoUrl().toString() );
-                        intent.putExtra("userEmail", user.getEmail());
-
-                        // saving user to database + getting upi
-                        getUpi(user, intent);
+                        getUpi(user);
 
                     } else {
                         Toast.makeText(this, R.string.message_signin_failed,
@@ -85,7 +74,7 @@ public class FirebaseLogin extends AppCompatActivity {
         }
     }
 
-    private void getUpi(FirebaseUser user, Intent intent) {
+    private void getUpi(FirebaseUser user) {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setCancelable(false);
@@ -101,12 +90,16 @@ public class FirebaseLogin extends AppCompatActivity {
             if (edt.getText().toString().equals("")) {
                 // fix required
             } else {
+
                 User user1 = new User(user.getDisplayName(), user.getPhotoUrl().toString(),
                         user.getEmail(), edt.getText().toString());
 
+                // for saving user data for first time
+                saveCurrentUser(user1);
+
                 UserApi userApi = ApiClient.getClient().create(UserApi.class);
 
-                Log.i("LoginInUser", user.getDisplayName()
+                Log.e("LoginInUser", user.getDisplayName()
                         + user.getEmail()
                         + user.getPhotoUrl().toString()
                         + edt.getText().toString());
@@ -120,6 +113,8 @@ public class FirebaseLogin extends AppCompatActivity {
 
                         Log.e(getString(R.string.pass), getString(R.string.status_code)
                                 + statusCode);
+                        Log.e(getString(R.string.pass), "Body"
+                                + response.body().toString());
                     }
 
                     @Override
@@ -129,11 +124,16 @@ public class FirebaseLogin extends AppCompatActivity {
                     }
                 });
 
-                startActivity(intent);
+                startActivity(new Intent(this, MainActivity.class));
             }
         });
 
         AlertDialog b = dialogBuilder.create();
         b.show();
+    }
+
+    private void saveCurrentUser (User currentUser) {
+        Gson gson = new Gson();
+        preferences.edit().putString("current_user", gson.toJson(currentUser)).commit();
     }
 }

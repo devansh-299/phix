@@ -4,7 +4,11 @@ import com.thebiglosers.phix.model.Transaction;
 
 import java.util.List;
 import io.reactivex.Single;
+import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface TransactionApi {
@@ -14,4 +18,8 @@ public interface TransactionApi {
                                              @Path("friend_user_name") String friend_user_name);
     @GET("all_transaction/{m_user_name}/")
     Single<List<Transaction>> getAllTransactions(@Path("m_user_name") String m_user_name);
+
+    @Headers("Accept: application/json")
+    @POST("create_transaction/")
+    Call<Transaction> addTransaction(@Body Transaction transaction);
 }

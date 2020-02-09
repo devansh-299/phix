@@ -9,16 +9,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,6 +36,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.Transaction;
+import com.thebiglosers.phix.model.User;
+import com.thebiglosers.phix.server.ApiClient;
+import com.thebiglosers.phix.server.TransactionApi;
 import com.thebiglosers.phix.view.adapter.TransactionAdapter;
 import com.thebiglosers.phix.view.fragment.PersonalFragment;
 import com.thebiglosers.phix.viewmodel.TransactionViewModel;
@@ -66,11 +77,16 @@ public class TransactionActivity extends AppCompatActivity implements
 
     private TransactionViewModel viewModel;
     Dialog myDialog;
+    Dialog addTransactionDialog;
 
     String friendUniqueUserName;
     String mUniqueUserName;
     String friendUpiId;
     String friendFullName;
+
+    User friendUser;
+
+    Float finalAmount;
 
     SharedPreferences preferences;
 
@@ -85,24 +101,16 @@ public class TransactionActivity extends AppCompatActivity implements
         // getting ViewModel
         viewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
+        myDialog = new Dialog(this);
+        addTransactionDialog = new Dialog(this);
+
 
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        if (getIntent().getStringExtra("friend_name") != null) {
-            tvFriendName.setText(getIntent().getStringExtra("friend_name"));
-        }
-
-        if (getIntent().getStringExtra("friend_unique_username") != null) {
+        if (getIntent().getParcelableExtra("selected_friend") != null) {
+            friendUser = getIntent().getParcelableExtra("selected_friend");
             friendUniqueUserName = getIntent().getStringExtra("friend_unique_username");
         }
-
-        if (getIntent().getStringExtra("friendUPIID") != null) {
-            friendUpiId = getIntent().getStringExtra("friendUPIID");
-        }
-        if (getIntent().getStringExtra("friendFullName") != null) {
-            friendFullName = getIntent().getStringExtra("friendFullName");
-        }
-
 
         mUniqueUserName = preferences.getString("UserUniqueName", "");
 
@@ -142,11 +150,9 @@ public class TransactionActivity extends AppCompatActivity implements
                 new PersonalFragment.RecyclerItemClickListener(getApplicationContext(),
                         (view1, position) -> {
                             Intent intent = new Intent(this, PaymentActivity.class);
-                            intent.putExtra("Amount",
-                                    Float.toString(transactionList.get(position).getAmount()));
                             intent.putExtra("friendUpiId", friendUpiId);
                             intent.putExtra("friendFullName", friendFullName);
-                            startActivity(intent);
+                            popUpSplitAmount(transactionList.get(position).getAmount(), intent);
                         })
         );
 
@@ -157,6 +163,42 @@ public class TransactionActivity extends AppCompatActivity implements
         observeViewModel();
     }
 
+    private void popUpSplitAmount(Float amount, Intent intent) {
+
+        RadioGroup radioGroup;
+        Button btnPay;
+
+        myDialog.setContentView(R.layout.popup_split_amount);
+
+        btnPay = (Button)myDialog.findViewById(R.id.bt_pay);
+        radioGroup = (RadioGroup)myDialog.findViewById(R.id.rd_split);
+        btnPay.setEnabled(false);
+
+        finalAmount = amount;
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch(checkedId){
+                case R.id.split_half:
+                    finalAmount = amount /2;
+                    intent.putExtra("Amount", Float.toString(finalAmount));
+                    btnPay.setEnabled(true);
+                    break;
+                case R.id.owe_total:
+                    btnPay.setEnabled(true);
+                    finalAmount = amount;
+                    intent.putExtra("Amount", Float.toString(finalAmount));
+                    break;
+            }
+        });
+        btnPay.setOnClickListener(view -> {
+            startActivity(intent);
+        });
+
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.show();
+
+    }
+
+    @SuppressLint("RestrictedApi")
     private void observeViewModel() {
 
         viewModel.mTransactions.observe(this, transactionParameter -> {
@@ -183,7 +225,7 @@ public class TransactionActivity extends AppCompatActivity implements
 
         // for success
         viewModel.successfullyLoadedTransaction.observe(this, loaded -> {
-            if (loaded != null && loaded == true){
+            if (loaded != null && loaded == true) {
                 errorLayout.setVisibility(View.GONE);
                 loadingLayout.setVisibility(View.GONE);
                 rvFriendTransaction.setVisibility(View.VISIBLE);
@@ -208,7 +250,58 @@ public class TransactionActivity extends AppCompatActivity implements
     }
 
     public void popUpAddTransaction() {
-        myDialog.setContentView(R.layout.popup_transaction);
+
+        EditText etAmount;
+        EditText etDescription;
+        Button btAddTransaction;
+        TextView tvProgressIndicator;
+        addTransactionDialog.setContentView(R.layout.popup_transaction);
+
+        btAddTransaction = (Button)addTransactionDialog.findViewById(R.id.popup_add_transaction);
+        etAmount = (EditText)addTransactionDialog.findViewById(R.id.popup_amount);
+        etDescription = (EditText)addTransactionDialog.findViewById(R.id.popup_description);
+        tvProgressIndicator = (TextView)addTransactionDialog.findViewById(R.id.tv_progress);
+        tvProgressIndicator.setVisibility(View.GONE);
+
+        btAddTransaction.setOnClickListener(view -> {
+
+            tvProgressIndicator.setText("Loading");
+            tvProgressIndicator.setVisibility(View.VISIBLE);
+            etAmount.setVisibility(View.GONE);
+            etDescription.setVisibility(View.GONE);
+
+            Transaction newTransaction = new Transaction(
+                    Float.valueOf(etAmount.getText().toString()),
+                    etDescription.getText().toString(),
+                    mUniqueUserName, friendUniqueUserName);
+
+            TransactionApi transactionApi = ApiClient.getClient().create(TransactionApi.class);
+            Call<Transaction> call = transactionApi.addTransaction(newTransaction);
+            call.enqueue(new Callback<Transaction>() {
+                @Override
+                public void onResponse(retrofit2.Call<Transaction> call, Response<Transaction> response) {
+
+                    int statusCode = response.code();
+                    tvProgressIndicator.setText("Added Successfully");
+
+
+                    Log.e("TRANS_PASS", getString(R.string.status_code)
+                            + statusCode);
+                    Log.e("TRANS_PASS", "Body" + response.body().toString());
+                }
+
+                @Override
+                public void onFailure(retrofit2.Call<Transaction> call, Throwable t) {
+                    Log.e("FAIL_TRANS", getString(R.string.error)
+                            + t.toString());
+                    tvProgressIndicator.setText("Error occurred");
+                }
+            });
+        });
+
+        addTransactionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        addTransactionDialog.show();
+
     }
 
     @Override

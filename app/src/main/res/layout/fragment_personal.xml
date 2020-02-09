@@ -56,24 +56,30 @@
 
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_Transactions"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:background="@color/white" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab"
-                android:visibility="gone"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/rv_Transactions"
-                android:layout_alignBottom="@+id/rv_Transactions"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:foreground="@drawable/ic_person_add"
-                app:fabSize="normal" />
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_Transactions"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:background="@color/white" />
+
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab"
+                    android:layout_width="93dp"
+                    android:layout_height="128dp"
+                    android:layout_alignEnd="@+id/rv_Transactions"
+                    android:layout_alignBottom="@+id/rv_Transactions"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:foreground="@drawable/ic_person_add"
+                    app:fabSize="normal" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 

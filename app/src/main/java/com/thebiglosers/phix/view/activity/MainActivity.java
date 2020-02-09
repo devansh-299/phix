@@ -6,11 +6,14 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
 import com.thebiglosers.phix.R;
+import com.thebiglosers.phix.model.User;
 import com.thebiglosers.phix.view.fragment.PersonalFragment;
 import com.thebiglosers.phix.view.fragment.GroupFragment;
 import com.thebiglosers.phix.view.fragment.HomeFragment;
@@ -18,10 +21,7 @@ import com.thebiglosers.phix.view.fragment.HomeFragment;
 public class MainActivity extends AppCompatActivity {
 
 
-    String userName;
-    String userImageString;
-    String uniqueUserName;
-
+    User currentUser;
     SharedPreferences preferences;
 
     @Override
@@ -34,15 +34,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
-
-        if (getIntent().getStringExtra("userName") != null &&
-        getIntent().getStringExtra("userImage") != null &&
-        getIntent().getStringExtra("userEmail") != null) {
-
-            setUpUser(getIntent().getStringExtra("userName"),
-                    getIntent().getStringExtra("userImage"),
-                    getIntent().getStringExtra("userEmail"));
-        }
+        currentUser = getCurrentUser();
+        preferences.edit().putString("UserUniqueName", getUniqueUserName());
 
         final Fragment homeFragment = new HomeFragment();
         final Fragment personalFragment = new PersonalFragment();
@@ -78,36 +71,19 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-
-    }
-
-    private void setUpUser(String userName, String userImage, String userEmail) {
-        this.userImageString = userImage;
-        this.userName = userName;
-
-        String []arr = userEmail.split("@",2);
-
-        uniqueUserName = arr[0];
-        preferences.edit().putString("UserUniqueName",uniqueUserName).commit();
-
     }
 
 
-    public String getUniqueUserName() { return uniqueUserName;
+    public String getUniqueUserName() {
+        String []arr = currentUser.getEmail().split("@",2);
+        return arr[0];
     }
 
-    private void setUserName(String currUserName) {
-        userName = currUserName;
+    public User getCurrentUser() {
+        Gson gson = new Gson();
+        return gson.fromJson(preferences.getString("current_user", ""), User.class);
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-
-    public String getUserImageString () {
-        return userImageString;
-    }
 
     @Override
     public void onBackPressed() {

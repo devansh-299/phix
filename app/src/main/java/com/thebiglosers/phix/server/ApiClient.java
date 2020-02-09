@@ -19,7 +19,7 @@ public class ApiClient {
     private static Retrofit retrofitInstance = null;
 
     //base url used
-    private static final String BASE_URL = "https://9e95d23d.ngrok.io/";
+    private static final String BASE_URL = "https://f830f312.ngrok.io/";
 
 
     public ApiClient() {

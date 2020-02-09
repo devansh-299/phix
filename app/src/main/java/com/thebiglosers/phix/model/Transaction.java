@@ -8,10 +8,11 @@ public class Transaction {
     String date;
     String destination;
 
-    public Transaction(Float amount, String description, String date) {
+    public Transaction(Float amount, String description, String source, String destination) {
         this.amount = amount;
         this.description = description;
-        this.date = date;
+        this.source = source;
+        this.destination = destination;
     }
 
     public Float getAmount() {

@@ -1,6 +1,7 @@
 package com.thebiglosers.phix.view.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +37,7 @@ import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.HomeDataModel;
 import com.thebiglosers.phix.view.activity.MainActivity;
+import com.thebiglosers.phix.view.activity.ProfileActivity;
 import com.thebiglosers.phix.viewmodel.HomeDataViewModel;
 
 import java.util.ArrayList;
@@ -91,6 +94,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return view;
     }
 
+    @OnClick(R.id.iv_user_image)
+    public void startProfileWindow() {
+        startActivity(new Intent(getActivity(), ProfileActivity.class));
+    }
+
 
     private void observeViewModel() {
 
@@ -108,7 +116,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 shimmerRecyclerView.setVisibility(View.GONE);
                 layoutHomeData.setVisibility(View.GONE);
                 mGraph.setVisibility(View.GONE);
-                ivErrorImage.setVisibility(View.GONE);
+                ivErrorImage.setVisibility(View.VISIBLE);
                 swipeRefreshLayout.setRefreshing(false);
             }
 
@@ -143,9 +151,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private void setUpGraph(Map<Integer, Integer> dataDict) {
 
-
         Cartesian areaChart = AnyChart.area();
-
         areaChart.animation(true);
 
         Crosshair crosshair = areaChart.crosshair();
@@ -165,11 +171,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             for (Map.Entry mapElement : dataDict.entrySet()) {
                 int key = (int) mapElement.getKey();
                 int value = ((int) mapElement.getValue());
-                Log.e("YO||", Integer.toString(key) + Integer.toString(value));
                 seriesData.add(new CustomDataEntry(key, value));
             }
         }else {
-            Log.e("emptyList","|||||");
+            Log.e("emptyList","GraphError");
             }
 
             Area series1 = areaChart.area(seriesData);
@@ -200,13 +205,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private void setUserData() {
         Glide.with(getContext())
-                .load(((MainActivity) getActivity()).getUserImageString())
+                .load(((MainActivity) getActivity()).getCurrentUser().getImageString())
                 .centerCrop()
                 .circleCrop()
                 .into(ivUserImage);
-        Toast.makeText(getActivity(),((MainActivity) getActivity()).getUserName(),
-                Toast.LENGTH_SHORT ).show();
-        tvUserName.setText(((MainActivity) getActivity()).getUserName());
+        Toast.makeText(getActivity(),((MainActivity) getActivity()).getCurrentUser()
+                .getFullName(), Toast.LENGTH_SHORT ).show();
+        tvUserName.setText(((MainActivity) getActivity()).getCurrentUser().getFullName());
     }
 
     @Override
