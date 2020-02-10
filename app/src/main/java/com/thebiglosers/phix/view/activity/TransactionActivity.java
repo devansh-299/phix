@@ -66,7 +66,7 @@ public class TransactionActivity extends AppCompatActivity implements
     NestedScrollView loadingLayout;
 
     @BindView(R.id.error_layout)
-    LinearLayout errorLayout;
+    View errorLayout;
 
 
     @BindView(R.id.swipe_container)
@@ -96,10 +96,14 @@ public class TransactionActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_transaction);
         ButterKnife.bind(this);
 
-        preferences = getSharedPreferences("com.thebiglosers.phix", MODE_PRIVATE);
+        preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
 
         // getting ViewModel
         viewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+
+        errorLayout.setVisibility(View.GONE);
+        Button myView = (Button) errorLayout.findViewById( R.id.error_layout_retry );
+        myView.setOnClickListener(view1 -> onRefresh());
 
         myDialog = new Dialog(this);
         addTransactionDialog = new Dialog(this);
@@ -110,6 +114,7 @@ public class TransactionActivity extends AppCompatActivity implements
         if (getIntent().getParcelableExtra("selected_friend") != null) {
             friendUser = getIntent().getParcelableExtra("selected_friend");
             friendUniqueUserName = getIntent().getStringExtra("friend_unique_username");
+            tvFriendName.setText(friendUser.getFullName());
         }
 
         mUniqueUserName = preferences.getString("UserUniqueName", "");

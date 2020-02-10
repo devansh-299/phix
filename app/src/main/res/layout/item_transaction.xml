@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_margin="2.5dp"
+    android:layout_margin="4dp"
     android:layout_height="90dp"
     android:elevation="5dp"
     android:background="@drawable/item_round_background"

@@ -31,7 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.activity.ProfileActivity"/>
+        <activity android:name=".view.activity.ProfileActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.activity.MainActivity"
             android:screenOrientation="portrait" />

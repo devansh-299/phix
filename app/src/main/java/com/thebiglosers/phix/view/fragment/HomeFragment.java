@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,8 +68,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @BindView(R.id.tv_todays_expense)
     TextView tvTodayExpense;
 
-    @BindView(R.id.iv_error)
-    ImageView ivErrorImage;
+    @BindView(R.id.error_layout)
+    View errorLayout;
 
     @BindView(R.id.swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -82,6 +83,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this,view);
 
+        errorLayout.setVisibility(View.GONE);
+        Button myView = (Button) errorLayout.findViewById( R.id.error_layout_retry );
+        myView.setOnClickListener(view1 -> onRefresh());
+
         viewModel = ViewModelProviders.of(this).get(HomeDataViewModel.class);
         viewModel.refresh(((MainActivity) getActivity()).getUniqueUserName());
 
@@ -92,6 +97,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         setUserData();
         observeViewModel();
         return view;
+
     }
 
     @OnClick(R.id.iv_user_image)
@@ -116,7 +122,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 shimmerRecyclerView.setVisibility(View.GONE);
                 layoutHomeData.setVisibility(View.GONE);
                 mGraph.setVisibility(View.GONE);
-                ivErrorImage.setVisibility(View.VISIBLE);
+                errorLayout.setVisibility(View.VISIBLE);
                 swipeRefreshLayout.setRefreshing(false);
             }
 
@@ -128,7 +134,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 shimmerRecyclerView.setVisibility(View.GONE);
                 layoutHomeData.setVisibility(View.VISIBLE);
                 mGraph.setVisibility(View.VISIBLE);
-                ivErrorImage.setVisibility(View.GONE);
+                errorLayout.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
             }
 
@@ -141,7 +147,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     shimmerRecyclerView.setVisibility(View.VISIBLE);
                     layoutHomeData.setVisibility(View.GONE);
                     mGraph.setVisibility(View.GONE);
-                    ivErrorImage.setVisibility(View.GONE);
+                    errorLayout.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(true);
                 }
             }

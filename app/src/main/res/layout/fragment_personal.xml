@@ -33,28 +33,11 @@
 
             </androidx.core.widget.NestedScrollView>
 
-            <LinearLayout
-                android:id="@+id/error_layout_personal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/error_image" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Error!"
-                    android:textColor="@color/material_blue"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+            <include
+                android:id="@+id/error_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                layout="@layout/error_layout" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"

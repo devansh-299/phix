@@ -3,10 +3,10 @@ package com.thebiglosers.phix.view.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -18,8 +18,8 @@ import com.thebiglosers.phix.view.fragment.PersonalFragment;
 import com.thebiglosers.phix.view.fragment.GroupFragment;
 import com.thebiglosers.phix.view.fragment.HomeFragment;
 
-public class MainActivity extends AppCompatActivity {
 
+public class MainActivity extends AppCompatActivity {
 
     User currentUser;
     SharedPreferences preferences;
@@ -35,19 +35,13 @@ public class MainActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
         currentUser = getCurrentUser();
-        preferences.edit().putString("UserUniqueName", getUniqueUserName());
+        preferences.edit().putString("UserUniqueName", getUniqueUserName()).commit();
 
         final Fragment homeFragment = new HomeFragment();
         final Fragment personalFragment = new PersonalFragment();
         final Fragment groupFragment = new GroupFragment();
-        final FragmentManager fm = getSupportFragmentManager();
-        final Fragment[] active = {homeFragment};
 
-        fm.beginTransaction().add(R.id.frame_layout, groupFragment, "3")
-                .hide(groupFragment).commit();
-        fm.beginTransaction().add(R.id.frame_layout, personalFragment, "2")
-                .hide(personalFragment).commit();
-        fm.beginTransaction().add(R.id.frame_layout,homeFragment, "1").commit();
+        replaceFragment(homeFragment, true, R.id.frame_layout);
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
@@ -55,24 +49,19 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.action_recents:
-                    fm.beginTransaction().hide(active[0]).show(homeFragment).commit();
-                    active[0] = homeFragment;
+                    replaceFragment(homeFragment, true, R.id.frame_layout);
                     return true;
                 case R.id.action_favorites:
-                    fm.beginTransaction().hide(active[0]).show(personalFragment).commit();
-                    active[0] = personalFragment;
+                    replaceFragment(personalFragment, true, R.id.frame_layout);
                     return true;
                 case R.id.action_nearby:
-
-                    fm.beginTransaction().hide(active[0]).show(groupFragment).commit();
-                    active[0] =groupFragment;
+                    replaceFragment(groupFragment, true, R.id.frame_layout);
                     return true;
             }
             return false;
         });
 
     }
-
 
     public String getUniqueUserName() {
         String []arr = currentUser.getEmail().split("@",2);
@@ -84,11 +73,32 @@ public class MainActivity extends AppCompatActivity {
         return gson.fromJson(preferences.getString("current_user", ""), User.class);
     }
 
-
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
+    }
+
+    public void replaceFragment(Fragment fragment, boolean addToBackStack, int containerId) {
+        invalidateOptionsMenu();
+        String backStateName = fragment.getClass().getName();
+        boolean fragmentPopped = getSupportFragmentManager().popBackStackImmediate(backStateName,
+                0);
+
+        if (!fragmentPopped && getSupportFragmentManager().findFragmentByTag(backStateName) ==
+                null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(
+                    R.anim.enter_from_right,
+                    R.anim.exit_to_left,
+                    R.anim.enter_from_left,
+                    R.anim.exit_to_right);
+            transaction.replace(containerId, fragment, backStateName);
+            if (addToBackStack) {
+                transaction.addToBackStack(backStateName);
+            }
+            transaction.commit();
+        }
     }
 }

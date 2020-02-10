@@ -35,7 +35,7 @@ public class FirebaseLogin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase_login);
 
-        preferences = getSharedPreferences("com.thebiglosers.phix", MODE_PRIVATE);
+        preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivityForResult(AuthUI.getInstance()
@@ -83,16 +83,19 @@ public class FirebaseLogin extends AppCompatActivity {
         final View dialogView = inflater.inflate(R.layout.alert_set_upi_id, null);
         dialogBuilder.setView(dialogView);
 
-        final EditText edt = (EditText) dialogView.findViewById(R.id.et_upi_id);
+        final EditText etUpiId = (EditText) dialogView.findViewById(R.id.et_upi_id);
+        final EditText etMobileNumber = (EditText)dialogView.findViewById(R.id.et_login_mobile);
 
         dialogBuilder.setPositiveButton(getString(R.string.done), (dialog, whichButton) -> {
 
-            if (edt.getText().toString().equals("")) {
+            if (etUpiId.getText().toString().equals("") || etMobileNumber.getText()
+            .toString().equals("")) {
                 // fix required
             } else {
 
                 User user1 = new User(user.getDisplayName(), user.getPhotoUrl().toString(),
-                        user.getEmail(), edt.getText().toString());
+                        user.getEmail(), etUpiId.getText().toString(),
+                       etMobileNumber.getText().toString());
 
                 // for saving user data for first time
                 saveCurrentUser(user1);
@@ -102,7 +105,8 @@ public class FirebaseLogin extends AppCompatActivity {
                 Log.e("LoginInUser", user.getDisplayName()
                         + user.getEmail()
                         + user.getPhotoUrl().toString()
-                        + edt.getText().toString());
+                        + etUpiId.getText().toString()
+                        + etMobileNumber.getText().toString());
 
                 Call<User> call = userApi.saveUser(user1);
                 call.enqueue(new Callback<User>() {

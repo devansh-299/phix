@@ -21,11 +21,16 @@ public class User implements Parcelable {
     @SerializedName("upi_id")
     String upiString;
 
-    public User(String fullName, String imageString, String email, String upiString) {
+    @SerializedName("phone_number")
+    String mobileNumber;
+
+    public User(String fullName, String imageString, String email, String upiString,
+                String mobileNumber) {
         this.fullName = fullName;
         this.imageString = imageString;
         this.email = email;
         this.upiString = upiString;
+        this.mobileNumber = mobileNumber;
     }
 
     protected User(Parcel in) {
@@ -34,6 +39,7 @@ public class User implements Parcelable {
         fullName = in.readString();
         email = in.readString();
         upiString = in.readString();
+        mobileNumber = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -62,6 +68,8 @@ public class User implements Parcelable {
     
     public String getEmail() { return email; }
 
+    public String getMobileNumber() { return mobileNumber; }
+
     @Override
     public int describeContents() {
         return 0;
@@ -74,5 +82,6 @@ public class User implements Parcelable {
         parcel.writeString(fullName);
         parcel.writeString(email);
         parcel.writeString(upiString);
+        parcel.writeString(mobileNumber);
     }
 }

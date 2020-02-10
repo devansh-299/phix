@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
@@ -43,8 +44,8 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @BindView(R.id.loading_layout)
     ShimmerRecyclerView loadingLayout;
 
-    @BindView(R.id.error_layout_personal)
-    LinearLayout errorLayout;
+    @BindView(R.id.error_layout)
+    View errorLayout;
 
     @BindView(R.id.swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -66,6 +67,10 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         viewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
         viewModel.refresh1(((MainActivity) getActivity()).getUniqueUserName());
+
+        errorLayout.setVisibility(View.GONE);
+        Button myView = (Button) errorLayout.findViewById( R.id.error_layout_retry );
+        myView.setOnClickListener(view1 -> onRefresh());
 
         mAdapter = new TransactionAdapter(transactionList);
         @SuppressLint("RestrictedApi") RecyclerView.LayoutManager mLayoutManager =

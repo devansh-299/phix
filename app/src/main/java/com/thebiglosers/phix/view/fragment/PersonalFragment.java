@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -52,8 +54,8 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
     @BindView(R.id.loading_layout)
     NestedScrollView loadingLayout;
 
-    @BindView(R.id.error_layout_personal)
-    LinearLayout errorLayout;
+    @BindView(R.id.error_layout)
+    View errorLayout;
 
     @BindView(R.id.swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -76,6 +78,10 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         viewModel.refresh(((MainActivity) getActivity()).getUniqueUserName());
 
+        errorLayout.setVisibility(View.GONE);
+        Button myView = (Button) errorLayout.findViewById( R.id.error_layout_retry );
+        myView.setOnClickListener(view1 -> onRefresh());
+
         mAdapter = new UserAdapter(userList,getActivity());
         @SuppressLint("RestrictedApi") RecyclerView.LayoutManager mLayoutManager =
                 new LinearLayoutManager(getApplicationContext());
@@ -92,7 +98,8 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
                             User friendUser = new User (userList.get(position).getFullName(),
                                     userList.get(position).getImageString(),
                                     userList.get(position).getEmail(),
-                                    userList.get(position).getUpiString());
+                                    userList.get(position).getUpiString(),
+                                    userList.get(position).getMobileNumber());
                             intent.putExtra("selected_friend", friendUser);
                             intent.putExtra("friend_unique_username",userList.get(position)
                                     .getUserName());
@@ -135,7 +142,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         });
 
         // for error
-        viewModel.imageLoadError.observe(this, isError -> {
+        viewModel.imageLoadError.observe(getActivity(), isError -> {
             if (isError != null && isError == true) {
                 loadingLayout.setVisibility(View.GONE);
                 rvUsers.setVisibility(View.GONE);
@@ -146,7 +153,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         });
 
         // for success
-        viewModel.successfullyLoaded.observe(this, loaded -> {
+        viewModel.successfullyLoaded.observe(getActivity(), loaded -> {
             if (loaded != null && loaded == true){
                 loadingLayout.setVisibility(View.GONE);
                 rvUsers.setVisibility(View.VISIBLE);
@@ -157,7 +164,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         });
 
         // in progress
-        viewModel.loading.observe(this, isLoading -> {
+        viewModel.loading.observe(getActivity(), isLoading -> {
             if (isLoading != null && isLoading instanceof Boolean) {
                 //loadingView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 if (isLoading) {
@@ -223,19 +230,19 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         Button btSearchFriend;
         Button btSearchAgain;
         Button btnYes;
-        LinearLayout searhcLayout;
+        LinearLayout searchLayout;
         LinearLayout searchAgainLayout;
-        TextView foundFrienName;
+        TextView foundFriendName;
 
         myDialog.setContentView(R.layout.popup_user);
 
         searchAgainLayout = (LinearLayout) myDialog.findViewById(R.id.layout_found);
         searchAgainLayout.setVisibility(View.GONE);
-        searhcLayout = (LinearLayout) myDialog.findViewById(R.id.layout_search_friend);
+        searchLayout = (LinearLayout) myDialog.findViewById(R.id.layout_search_friend);
         etFriendName = (EditText) myDialog.findViewById(R.id.et_friend_name);
         btSearchFriend = (Button) myDialog.findViewById(R.id.bt_search_friend);
         btSearchAgain = (Button) myDialog.findViewById(R.id.bt_search_again);
-        foundFrienName = (TextView) myDialog.findViewById(R.id.tv_found_friend);
+        foundFriendName = (TextView) myDialog.findViewById(R.id.tv_found_friend);
         btnYes = (Button) myDialog.findViewById(R.id.btn_yes_);
 
         btSearchFriend.setOnClickListener(view -> {
@@ -244,16 +251,19 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
 
             viewModel.friend.observe(getActivity(), friendParameter -> {
                 if (friendParameter != null && friendParameter instanceof User) {
-                    foundFrienName.setText(friendParameter.getFullName());
-                    searhcLayout.setVisibility(View.GONE);
+                    foundFriendName.setText("Loading...");
+                    btnYes.setVisibility(View.GONE);
+                    searchLayout.setVisibility(View.GONE);
                     searchAgainLayout.setVisibility(View.VISIBLE);
                 }
             });
 
             // for success
-            viewModel.foundFriend.observe(this, loaded -> {
-                if (loaded != null && loaded instanceof Boolean){
-                    searhcLayout.setVisibility(View.GONE);
+            viewModel.foundFriendName.observe(getActivity(), fName -> {
+                if (fName != null && fName instanceof String){
+                    foundFriendName.setText(fName);
+                    btnYes.setVisibility(View.VISIBLE);
+                    searchLayout.setVisibility(View.GONE);
                     searchAgainLayout.setVisibility(View.VISIBLE);
                 }
 
@@ -262,8 +272,9 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
             // for error
             viewModel.friendNotFound.observe(getActivity(), isError -> {
                 if (isError != null && isError instanceof Boolean) {
-                    foundFrienName.setText("No user found!");
-                    searhcLayout.setVisibility(View.GONE);
+                    foundFriendName.setText("No user found!");
+                    btnYes.setVisibility(View.GONE);
+                    searchLayout.setVisibility(View.GONE);
                     searchAgainLayout.setVisibility(View.VISIBLE);
                 }
 
@@ -273,7 +284,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         btnYes.setOnClickListener(view -> myDialog.dismiss());
 
         btSearchAgain.setOnClickListener(view -> {
-            searhcLayout.setVisibility(View.VISIBLE);
+            searchLayout.setVisibility(View.VISIBLE);
             searchAgainLayout.setVisibility(View.GONE);
         });
 

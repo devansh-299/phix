@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.model.User;
 import com.thebiglosers.phix.server.ApiClient;
 
@@ -23,7 +22,7 @@ public class UserViewModel extends AndroidViewModel {
     public MutableLiveData<List<User>> mUser = new MutableLiveData<>();
     public MutableLiveData<Boolean> imageLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> successfullyLoaded = new MutableLiveData<>();
-    public MutableLiveData<Boolean> foundFriend = new MutableLiveData<>();
+    public MutableLiveData<String> foundFriendName = new MutableLiveData<>();
     public MutableLiveData<Boolean> friendNotFound = new MutableLiveData<>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
@@ -52,8 +51,6 @@ public class UserViewModel extends AndroidViewModel {
 
                             @Override
                             public void onSuccess(List<User> users) {
-                                Toast.makeText(getApplication(), "Data retrieved from Server",
-                                        Toast.LENGTH_SHORT).show();
                                 usersRetrieved(users);
                             }
 
@@ -87,7 +84,7 @@ public class UserViewModel extends AndroidViewModel {
                                 Toast.makeText(getApplication(), "Found",
                                         Toast.LENGTH_SHORT).show();
                                 Log.e("Positive","GOT FRIEND");
-                                foundFriend.setValue(true);
+                                foundFriendName.setValue(mfriend.getFullName());
                                 friend.setValue(mfriend);
                             }
 
