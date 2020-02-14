@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class FirebaseLogin extends AppCompatActivity {
 
     public static int SIGN_IN_REQUEST_CODE = 10;
     SharedPreferences preferences;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class FirebaseLogin extends AppCompatActivity {
                         Toast.makeText(this,
                                 R.string.message_signin_successful, Toast.LENGTH_LONG).show();
 
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        user = FirebaseAuth.getInstance().getCurrentUser();
                         getUpi(user);
 
                     } else {
@@ -88,9 +90,13 @@ public class FirebaseLogin extends AppCompatActivity {
 
         dialogBuilder.setPositiveButton(getString(R.string.done), (dialog, whichButton) -> {
 
-            if (etUpiId.getText().toString().equals("") || etMobileNumber.getText()
-            .toString().equals("")) {
-                // fix required
+            if (etUpiId.getText().toString().matches("") || etMobileNumber.getText()
+            .toString().matches("")) {
+                Toast.makeText(
+                        this,
+                        "Please enter the details",
+                        Toast.LENGTH_SHORT).show();
+                getUpi(user);
             } else {
 
                 User user1 = new User(user.getDisplayName(), user.getPhotoUrl().toString(),
@@ -108,7 +114,12 @@ public class FirebaseLogin extends AppCompatActivity {
                         + etUpiId.getText().toString()
                         + etMobileNumber.getText().toString());
 
-                Call<User> call = userApi.saveUser(user1);
+                Call<User> call = userApi.saveUser(user1.getFullName(),
+                        user1.getImageString(),
+                        user1.getEmail(),
+                        user1.getUpiString(),
+                        user1.getMobileNumber());
+
                 call.enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(retrofit2.Call<User> call, Response<User> response) {
@@ -117,23 +128,55 @@ public class FirebaseLogin extends AppCompatActivity {
 
                         Log.e(getString(R.string.pass), getString(R.string.status_code)
                                 + statusCode);
-                        Log.e(getString(R.string.pass), "Body"
-                                + response.body().toString());
+                        try {
+                            /*
+                            this log also checks if response is null or not
+                             */
+                            Log.e(getString(R.string.pass), "Body"
+                                    + response.body().toString());
+                            startMainActivity();
+                        } catch (Exception e) {
+                            Log.e("LOG PASS", "Empty Response");
+                            loginFailed();
+                        }
                     }
 
                     @Override
                     public void onFailure(retrofit2.Call<User> call, Throwable t) {
                         Log.e(getString(R.string.fail), getString(R.string.error)
                                 + t.toString());
+
+                        loginFailed();
                     }
                 });
 
-                startActivity(new Intent(this, MainActivity.class));
+
             }
         });
 
         AlertDialog b = dialogBuilder.create();
         b.show();
+    }
+
+    private void loginFailed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Registration Failed")
+                .setMessage("Do you want to retry or exit?")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getUpi(user);
+                })
+                .setNegativeButton("Exit", ((dialogInterface, i) -> {
+                    moveTaskToBack(true);
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                    System.exit(1);
+                }))
+                .setIcon(R.drawable.error_image)
+                .show();
+    }
+
+    private void startMainActivity() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     private void saveCurrentUser (User currentUser) {

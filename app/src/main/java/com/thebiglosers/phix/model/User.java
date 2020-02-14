@@ -2,7 +2,6 @@ package com.thebiglosers.phix.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
 public class User implements Parcelable {

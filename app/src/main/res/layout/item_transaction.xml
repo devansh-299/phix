@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_margin="4dp"
-    android:layout_height="90dp"
-    android:elevation="5dp"
-    android:background="@drawable/item_round_background"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -21,16 +19,17 @@
             android:layout_height="wrap_content"
             android:text="Title"
             android:textColor="@color/material_blue"
-            android:textSize="24dp" />
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/item_date"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textSize="18dp"
+            android:textSize="16dp"
             android:text="Date"
             android:textColor="@color/material_dark_grey" />
 
@@ -47,7 +46,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="5dp"
-            android:textSize="24sp"
+            android:textSize="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -57,7 +56,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:layout_gravity="center_vertical"
-            android:textSize="24dp"
+            android:textSize="20dp"
             android:text="Amount"
             android:textColor="@color/material_green" />
 

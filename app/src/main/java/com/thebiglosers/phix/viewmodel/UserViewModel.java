@@ -2,7 +2,6 @@ package com.thebiglosers.phix.viewmodel;
 
 import android.app.Application;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.thebiglosers.phix.model.User;
 import com.thebiglosers.phix.server.ApiClient;
@@ -22,11 +21,7 @@ public class UserViewModel extends AndroidViewModel {
     public MutableLiveData<List<User>> mUser = new MutableLiveData<>();
     public MutableLiveData<Boolean> imageLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> successfullyLoaded = new MutableLiveData<>();
-    public MutableLiveData<String> foundFriendName = new MutableLiveData<>();
-    public MutableLiveData<Boolean> friendNotFound = new MutableLiveData<>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<>();
-
-    public MutableLiveData<User> friend = new MutableLiveData<>();
 
     private ApiClient apiClient = new ApiClient();
 
@@ -72,29 +67,28 @@ public class UserViewModel extends AndroidViewModel {
     }
 
 
-    public void fetchFriend(String friendUserName, String mUniqueUserName) {
-        disposable.add(
-                apiClient.getFriend("friend/"+mUniqueUserName+"/"+friendUserName)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<User>() {
-
-                            @Override
-                            public void onSuccess(User mfriend) {
-                                Toast.makeText(getApplication(), "Found",
-                                        Toast.LENGTH_SHORT).show();
-                                Log.e("Positive","GOT FRIEND");
-                                foundFriendName.setValue(mfriend.getFullName());
-                                friend.setValue(mfriend);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                loading.setValue(false);
-                                Log.e("Friend ERROR",e.getMessage());
-                                friendNotFound.setValue(true);
-                            }
-                        }));
-    }
-
+//    public void fetchFriend(String friendUserName, String mUniqueUserName) {
+//        disposable.add(
+//                apiClient.getFriend("add_friend/"+mUniqueUserName+"/"+friendUserName)
+//                        .subscribeOn(Schedulers.newThread())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeWith(new DisposableSingleObserver<User>() {
+//
+//                            @Override
+//                            public void onSuccess(User mfriend) {
+//                                Toast.makeText(getApplication(), "Found",
+//                                        Toast.LENGTH_SHORT).show();
+//                                Log.e("Positive","GOT FRIEND");
+//                                foundFriendName.setValue(mfriend.getFullName());
+//                                friend.setValue(mfriend);
+//                            }
+//
+//                            @Override
+//                            public void onError(Throwable e) {
+//                                loading.setValue(false);
+//                                Log.e("Friend ERROR",e.getMessage());
+//                                friendNotFound.setValue(true);
+//                            }
+//                        }));
+//    }
 }

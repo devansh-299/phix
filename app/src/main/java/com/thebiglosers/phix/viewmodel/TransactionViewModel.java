@@ -51,8 +51,7 @@ public class TransactionViewModel extends AndroidViewModel {
 
                             @Override
                             public void onSuccess(List<Transaction> transactions) {
-                                Toast.makeText(getApplication(), "Data retrieved from Server",
-                                        Toast.LENGTH_SHORT).show();
+                                Log.e("GOT TRANS","transactions found");
                                 transactionsRetrived(transactions);
                             }
 
@@ -94,8 +93,7 @@ public class TransactionViewModel extends AndroidViewModel {
 
                             @Override
                             public void onSuccess(List<Transaction> transactions) {
-                                Toast.makeText(getApplication(), "Data retrieved from Server",
-                                        Toast.LENGTH_SHORT).show();
+                                Log.e("GOT TRANS","transactions found");
                                 allTransactionsRetrived(transactions);
                             }
 

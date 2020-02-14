@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.thebiglosers.phix.R;
@@ -28,6 +29,7 @@ import java.util.List;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -46,6 +48,9 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @BindView(R.id.error_layout)
     View errorLayout;
+
+    @BindView(R.id.not_found)
+    View notFoundLayout;
 
     @BindView(R.id.swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -69,8 +74,10 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         viewModel.refresh1(((MainActivity) getActivity()).getUniqueUserName());
 
         errorLayout.setVisibility(View.GONE);
-        Button myView = (Button) errorLayout.findViewById( R.id.error_layout_retry );
-        myView.setOnClickListener(view1 -> onRefresh());
+        notFoundLayout.setVisibility(View.GONE);
+
+        Button errorButton = (Button) errorLayout.findViewById( R.id.error_layout_retry );
+        errorButton.setOnClickListener(view1 -> onRefresh());
 
         mAdapter = new TransactionAdapter(transactionList);
         @SuppressLint("RestrictedApi") RecyclerView.LayoutManager mLayoutManager =
@@ -78,6 +85,8 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         rvUsers.setLayoutManager(mLayoutManager);
         rvUsers.setItemAnimator(new DefaultItemAnimator());
         rvUsers.setAdapter(mAdapter);
+        rvUsers.addItemDecoration(new DividerItemDecoration(rvUsers.getContext(),
+                DividerItemDecoration.VERTICAL));
 
         swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -91,11 +100,20 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         viewModel.mAllTransactions.observe(getActivity(), mAll -> {
             if (mAll != null && mAll instanceof List) {
-                rvUsers.setVisibility(View.VISIBLE);
-                mAdapter.updateImageList(mAll);
-                swipeRefreshLayout.setRefreshing(false);
-                errorLayout.setVisibility(View.GONE);
-                loadingLayout.setVisibility(View.GONE);
+
+                if (mAll.isEmpty()) {
+                    rvUsers.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
+                    errorLayout.setVisibility(View.GONE);
+                    loadingLayout.setVisibility(View.GONE);
+                    notFoundLayout.setVisibility(View.VISIBLE);
+                } else {
+                    mAdapter.updateImageList(mAll);
+                    notFoundLayout.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
+                    errorLayout.setVisibility(View.GONE);
+                    loadingLayout.setVisibility(View.GONE);
+                }
             }
         });
 

@@ -44,7 +44,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Transaction transaction = mTransactionList.get(position);
         holder.title.setText(transaction.getDescription());
-        holder.date.setText(transaction.getDate());
         holder.amount.setText(Float.toString(transaction.getAmount()));
     }
 

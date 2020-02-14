@@ -69,5 +69,8 @@ dependencies {
     // graph
     implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
 
+    //lottie animations
+    implementation 'com.airbnb.android:lottie:3.3.1'
+
 
 }

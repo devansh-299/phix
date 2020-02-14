@@ -1,32 +1,53 @@
 package com.thebiglosers.phix.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class HomeDataModel {
 
-    float todaysExpense;
-
-    float monthsExpense;
 
     Map<Integer, Integer> data = new HashMap<Integer, Integer>();
 
-    public HomeDataModel(float todaysExpense, float monthsExpense, Map<Integer, Integer> data) {
-        this.todaysExpense = todaysExpense;
-        this.monthsExpense = monthsExpense;
+    @SerializedName("today")
+    Double today;
+
+    @SerializedName("month")
+    Double month;
+
+    @SerializedName("week")
+    Double week;
+
+    @SerializedName("daily_avg_current")
+    Double dailyAvg;
+
+
+    public HomeDataModel(Map<Integer, Integer> data, Double today, Double month, Double dailyAvg) {
         this.data = data;
+        this.today = today;
+        this.month = month;
+        this.dailyAvg = dailyAvg;
     }
 
-    public float getTodaysExpense() {
-        return todaysExpense;
-    }
-
-    public float getMonthsExpense() {
-        return monthsExpense;
-    }
-
-    public Map<Integer,Integer> getData() {
+    public Map<Integer, Integer> getData() {
         return data;
+    }
+
+    public Double getToday() {
+        return today;
+    }
+
+    public Double getMonth() {
+        return month;
+    }
+
+    public Double getWeek() {
+        return week;
+    }
+
+    public Double getDailyAvg() {
+        return dailyAvg;
     }
 
 

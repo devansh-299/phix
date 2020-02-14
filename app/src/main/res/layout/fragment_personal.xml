@@ -39,6 +39,7 @@
                 android:layout_height="match_parent"
                 layout="@layout/error_layout" />
 
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -49,6 +50,12 @@
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:background="@color/white" />
+
+                <include
+                    android:id="@+id/not_found"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    layout="@layout/not_found_layout" />
 
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton

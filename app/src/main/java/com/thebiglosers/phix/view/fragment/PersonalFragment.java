@@ -16,13 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.User;
+import com.thebiglosers.phix.server.ApiClient;
+import com.thebiglosers.phix.server.UserApi;
 import com.thebiglosers.phix.view.activity.MainActivity;
 import com.thebiglosers.phix.view.activity.TransactionActivity;
 import com.thebiglosers.phix.view.adapter.UserAdapter;
@@ -30,16 +32,21 @@ import com.thebiglosers.phix.viewmodel.UserViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
@@ -56,6 +63,9 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @BindView(R.id.error_layout)
     View errorLayout;
+
+    @BindView(R.id.not_found)
+    View notFoundLayout;
 
     @BindView(R.id.swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -78,15 +88,23 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         viewModel.refresh(((MainActivity) getActivity()).getUniqueUserName());
 
+
+        TextView errorText = (TextView) notFoundLayout.findViewById( R.id.tv_not_found );
+        errorText.setText("You currently have no friends");
+
+        Button errorButton = (Button) errorLayout.findViewById( R.id.error_layout_retry );
+        errorButton.setOnClickListener(view1 -> onRefresh());
+
+        notFoundLayout.setVisibility(View.GONE);
         errorLayout.setVisibility(View.GONE);
-        Button myView = (Button) errorLayout.findViewById( R.id.error_layout_retry );
-        myView.setOnClickListener(view1 -> onRefresh());
 
         mAdapter = new UserAdapter(userList,getActivity());
         @SuppressLint("RestrictedApi") RecyclerView.LayoutManager mLayoutManager =
                 new LinearLayoutManager(getApplicationContext());
         rvUsers.setLayoutManager(mLayoutManager);
         rvUsers.setItemAnimator(new DefaultItemAnimator());
+        rvUsers.addItemDecoration(new DividerItemDecoration(rvUsers.getContext(),
+                DividerItemDecoration.VERTICAL));
         rvUsers.setAdapter(mAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -129,14 +147,25 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
     @SuppressLint("RestrictedApi")
     private void observeViewModel() {
 
-        viewModel.mUser.observe(this, userParemeter -> {
+        viewModel.mUser.observe(getActivity(), userParemeter -> {
             if (userParemeter != null && userParemeter instanceof List) {
-                rvUsers.setVisibility(View.VISIBLE);
-                mAdapter.updateImageList(userParemeter);
-                swipeRefreshLayout.setRefreshing(false);
-                errorLayout.setVisibility(View.GONE);
-                loadingLayout.setVisibility(View.GONE);
-                fab.setVisibility(View.VISIBLE);
+
+                if (userParemeter.isEmpty()) {
+                    rvUsers.setVisibility(View.GONE);
+                    notFoundLayout.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setRefreshing(false);
+                    errorLayout.setVisibility(View.GONE);
+                    loadingLayout.setVisibility(View.GONE);
+                    fab.setVisibility(View.VISIBLE);
+                } else {
+                    notFoundLayout.setVisibility(View.GONE);
+                    rvUsers.setVisibility(View.VISIBLE);
+                    mAdapter.updateImageList(userParemeter);
+                    swipeRefreshLayout.setRefreshing(false);
+                    errorLayout.setVisibility(View.GONE);
+                    loadingLayout.setVisibility(View.GONE);
+                    fab.setVisibility(View.VISIBLE);
+                }
 
             }
         });
@@ -223,67 +252,106 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
     }
 
-
     public void popAddFriend() {
 
         EditText etFriendName;
+        EditText etFriendNumber;
         Button btSearchFriend;
         Button btSearchAgain;
+        Button selectNameInput;
+        Button selectNumberInput;
         Button btnYes;
         LinearLayout searchLayout;
         LinearLayout searchAgainLayout;
+        LinearLayout topLayout;
         TextView foundFriendName;
+        AtomicInteger FLAG = new AtomicInteger();
 
         myDialog.setContentView(R.layout.popup_user);
 
-        searchAgainLayout = (LinearLayout) myDialog.findViewById(R.id.layout_found);
+        topLayout = myDialog.findViewById(R.id.popup_top_bar);
+        searchAgainLayout = myDialog.findViewById(R.id.layout_found);
         searchAgainLayout.setVisibility(View.GONE);
-        searchLayout = (LinearLayout) myDialog.findViewById(R.id.layout_search_friend);
-        etFriendName = (EditText) myDialog.findViewById(R.id.et_friend_name);
-        btSearchFriend = (Button) myDialog.findViewById(R.id.bt_search_friend);
-        btSearchAgain = (Button) myDialog.findViewById(R.id.bt_search_again);
-        foundFriendName = (TextView) myDialog.findViewById(R.id.tv_found_friend);
-        btnYes = (Button) myDialog.findViewById(R.id.btn_yes_);
+        searchLayout = myDialog.findViewById(R.id.layout_search_friend);
+        etFriendName = myDialog.findViewById(R.id.et_friend_name);
+        etFriendNumber = myDialog.findViewById(R.id.et_friend_phone_number);
+        selectNameInput = myDialog.findViewById(R.id.bt_search_friend);
+        selectNumberInput = myDialog.findViewById(R.id.bt_search_phone_number);
+        btSearchFriend = myDialog.findViewById(R.id.bt_search_friend);
+        btSearchAgain = myDialog.findViewById(R.id.bt_search_again);
+        foundFriendName = myDialog.findViewById(R.id.tv_found_friend);
+        btnYes = myDialog.findViewById(R.id.btn_yes_);
+
+        // defining initial status
+        etFriendNumber.setVisibility(View.GONE);
+
+        // selecting Number Input
+        selectNumberInput.setOnClickListener(view -> {
+            FLAG.set(1);
+            etFriendNumber.setVisibility(View.VISIBLE);
+            etFriendName.setVisibility(View.GONE);
+
+        });
+
+        // selecting Name Input
+        selectNameInput.setOnClickListener(view -> {
+            FLAG.set(0);
+            etFriendName.setVisibility(View.VISIBLE);
+            etFriendNumber.setVisibility(View.GONE);
+
+        });
 
         btSearchFriend.setOnClickListener(view -> {
-            String friendName  = etFriendName.getText().toString();
-            viewModel.fetchFriend(friendName,((MainActivity) getActivity()).getUniqueUserName());
 
-            viewModel.friend.observe(getActivity(), friendParameter -> {
-                if (friendParameter != null && friendParameter instanceof User) {
-                    foundFriendName.setText("Loading...");
-                    btnYes.setVisibility(View.GONE);
-                    searchLayout.setVisibility(View.GONE);
-                    searchAgainLayout.setVisibility(View.VISIBLE);
-                }
-            });
+            // for loading
+            foundFriendName.setText("Loading...");
+            btnYes.setVisibility(View.GONE);
+            searchLayout.setVisibility(View.GONE);
+            searchAgainLayout.setVisibility(View.VISIBLE);
+            topLayout.setVisibility(View.GONE);
 
-            // for success
-            viewModel.foundFriendName.observe(getActivity(), fName -> {
-                if (fName != null && fName instanceof String){
-                    foundFriendName.setText(fName);
+            Call<User> call;
+
+            UserApi userApi = ApiClient.getClient().create(UserApi.class);
+            if (FLAG.get() == 0) {
+                call = userApi.searchFriendByName(etFriendName.getText().toString());
+            } else {
+                call = userApi.searchFriendByNumber(etFriendNumber.getText().toString());
+            }
+
+            call.enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(retrofit2.Call<User> call, Response<User>
+                        response) {
+
+                    //foundFriendName.setText();
                     btnYes.setVisibility(View.VISIBLE);
                     searchLayout.setVisibility(View.GONE);
                     searchAgainLayout.setVisibility(View.VISIBLE);
+
+                    Log.e("ADD FRIEND", "Call Successful");
                 }
 
-            });
+                @Override
+                public void onFailure(retrofit2.Call<User> call, Throwable t) {
 
-            // for error
-            viewModel.friendNotFound.observe(getActivity(), isError -> {
-                if (isError != null && isError instanceof Boolean) {
                     foundFriendName.setText("No user found!");
                     btnYes.setVisibility(View.GONE);
                     searchLayout.setVisibility(View.GONE);
                     searchAgainLayout.setVisibility(View.VISIBLE);
-                }
 
+                    Log.e("ADD FRIEND", "Call Unsuccessful "+t.getMessage());
+                }
             });
         });
 
-        btnYes.setOnClickListener(view -> myDialog.dismiss());
+        btnYes.setOnClickListener(view -> {
+            Toast.makeText(getActivity(), "Friend Added",Toast.LENGTH_SHORT).show();
+            myDialog.dismiss();
+        });
 
         btSearchAgain.setOnClickListener(view -> {
+            topLayout.setVisibility(View.VISIBLE);
             searchLayout.setVisibility(View.VISIBLE);
             searchAgainLayout.setVisibility(View.GONE);
         });

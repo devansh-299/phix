@@ -68,6 +68,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @BindView(R.id.tv_todays_expense)
     TextView tvTodayExpense;
 
+    @BindView(R.id.tv_avg_expense)
+    TextView tvAvgExpense;
+
     @BindView(R.id.error_layout)
     View errorLayout;
 
@@ -110,9 +113,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         viewModel.mData.observe(getActivity(), dataParameter -> {
             if(dataParameter!=null && dataParameter instanceof HomeDataModel){
-                tvMonthsExpense.setText(Float.toString(dataParameter.getMonthsExpense()));
-                tvTodayExpense.setText(Float.toString(dataParameter.getTodaysExpense()));
                 setUpGraph(dataParameter.getData());
+                tvTodayExpense.setText(String.valueOf(dataParameter.getToday()));
+                tvMonthsExpense.setText(String.valueOf(dataParameter.getMonth()));
+                tvAvgExpense.setText(String.valueOf(dataParameter.getDailyAvg()));
             }
         });
 
@@ -162,13 +166,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         Crosshair crosshair = areaChart.crosshair();
         crosshair.enabled(true);
-        crosshair.yStroke((Stroke) null, null, null, (String) null, (String) null)
+        crosshair.yStroke((Stroke) null, null, null, (String) null,
+                (String) null)
                 .xStroke("#6C63FF", 1d, null, (String) null, (String) null)
                 .zIndex(39d);
         crosshair.yLabel(0).enabled(true);
 
         areaChart.yScale().stackMode(ScaleStackMode.VALUE);
-
         areaChart.title("This months Analysis");
 
         List<DataEntry> seriesData = new ArrayList<>();
@@ -179,32 +183,30 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 int value = ((int) mapElement.getValue());
                 seriesData.add(new CustomDataEntry(key, value));
             }
-        }else {
-            Log.e("emptyList","GraphError");
-            }
+        } else { Log.e("emptyList","GraphError"); }
 
             Area series1 = areaChart.area(seriesData);
+            series1.name("Expense");
             series1.stroke("3 #fff");
             series1.hovered().stroke("3 #fff");
             series1.hovered().markers().enabled(true);
             series1.hovered().markers()
                     .type(MarkerType.CIRCLE)
-                    .size(4d)
+                    .size(3d)
                     .stroke("1.5 #fff");
             series1.markers().zIndex(100d);
-
 
             areaChart.legend().enabled(true);
             areaChart.legend().fontSize(13d);
             areaChart.legend().padding(0d, 0d, 20d, 0d);
 
-            areaChart.xAxis(0).title(false);
+            areaChart.xAxis(0).title("Date");
             areaChart.yAxis(0).title("Expenditure");
 
             areaChart.interactivity().hoverMode(HoverMode.BY_X);
             areaChart.tooltip()
                     .valuePrefix("₹")
-                    .displayMode(TooltipDisplayMode.UNION);
+                    .displayMode(TooltipDisplayMode.SINGLE);
 
             mGraph.setChart(areaChart);
     }

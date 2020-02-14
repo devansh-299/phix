@@ -2,14 +2,9 @@ package com.thebiglosers.phix.viewmodel;
 
 import android.app.Application;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.thebiglosers.phix.model.HomeDataModel;
-import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.server.ApiClient;
-import com.thebiglosers.phix.view.fragment.HomeFragment;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -50,9 +45,12 @@ public class HomeDataViewModel extends AndroidViewModel {
 
                             @Override
                             public void onSuccess(HomeDataModel data) {
-                                Toast.makeText(getApplication(), "Data retrieved from Server",
-                                        Toast.LENGTH_SHORT).show();
                                 Log.e("SUCCESS", "HomeDataLoaded");
+                                try{
+                                    //
+                                } catch (Exception e) {
+                                    Log.e ("Data", "Empty data");
+                                }
                                 homeDataRetrieved(data);
                             }
 

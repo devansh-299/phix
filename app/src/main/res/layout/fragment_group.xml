@@ -25,6 +25,12 @@
                     android:layout_height="match_parent"
                     layout="@layout/error_layout" />
 
+                <include
+                    android:id="@+id/not_found"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    layout="@layout/not_found_layout" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_Transactions"
                     android:layout_width="match_parent"
