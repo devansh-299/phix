@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -17,10 +18,10 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,8 +45,9 @@ import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.model.User;
 import com.thebiglosers.phix.server.ApiClient;
 import com.thebiglosers.phix.server.TransactionApi;
+import com.thebiglosers.phix.util.SwipeController;
+import com.thebiglosers.phix.util.SwipeControllerActions;
 import com.thebiglosers.phix.view.adapter.TransactionAdapter;
-import com.thebiglosers.phix.view.fragment.PersonalFragment;
 import com.thebiglosers.phix.viewmodel.TransactionViewModel;
 
 import java.util.ArrayList;
@@ -97,6 +99,11 @@ public class TransactionActivity extends AppCompatActivity implements
 
     SharedPreferences preferences;
 
+    enum PaymentMode {
+        CASH,
+        UPI,
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,6 +153,34 @@ public class TransactionActivity extends AppCompatActivity implements
         rvFriendTransaction.setItemAnimator(new DefaultItemAnimator());
         rvFriendTransaction.setAdapter(mAdapter);
 
+
+
+        // for swiping items
+        SwipeController swipeController = new SwipeController();
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeController);
+        itemTouchhelper.attachToRecyclerView(rvFriendTransaction);
+
+        SwipeController finalSwipeController = swipeController;
+        rvFriendTransaction.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+                finalSwipeController.onDraw(c);
+            }
+        });
+
+        swipeController = new SwipeController(new SwipeControllerActions() {
+            @Override
+            public void onRightClicked(int position) {
+
+                popUpSplitAmount(PaymentMode.UPI,transactionList.get(position).getAmount());
+            }
+            @Override
+            public void onLeftClicked(int position) {
+                popUpSplitAmount(PaymentMode.UPI,transactionList.get(position).getAmount());
+            }
+        });
+
+
         rvFriendTransaction.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -158,16 +193,6 @@ public class TransactionActivity extends AppCompatActivity implements
             }
         });
 
-        rvFriendTransaction.addOnItemTouchListener(
-                new PersonalFragment.RecyclerItemClickListener(getApplicationContext(),
-                        (view1, position) -> {
-                            Intent intent = new Intent(this, PaymentActivity.class);
-                            intent.putExtra("friendUpiId", friendUpiId);
-                            intent.putExtra("friendFullName", friendFullName);
-                            popUpSplitAmount(transactionList.get(position).getAmount(), intent);
-                        })
-        );
-
         viewModel.refresh(mUniqueUserName, friendUniqueUserName);
 
         fab.setOnClickListener(view -> popUpAddTransaction());
@@ -175,7 +200,7 @@ public class TransactionActivity extends AppCompatActivity implements
         observeViewModel();
     }
 
-    private void popUpSplitAmount(Float amount, Intent intent) {
+    private void popUpSplitAmount(PaymentMode mode,Float amount) {
 
         RadioGroup radioGroup;
         Button btnPay;
@@ -186,18 +211,33 @@ public class TransactionActivity extends AppCompatActivity implements
         radioGroup = myDialog.findViewById(R.id.rd_split);
         btnPay.setEnabled(false);
 
+        Intent intent = new Intent(getApplicationContext(), PaymentActivity.class);
+        intent.putExtra("friendUpiId", friendUpiId);
+        intent.putExtra("friendFullName", friendFullName);
+
         finalAmount = amount;
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch(checkedId){
                 case R.id.split_half:
                     finalAmount = amount /2;
-                    intent.putExtra("Amount", Float.toString(finalAmount));
-                    btnPay.setEnabled(true);
+                    if (mode == PaymentMode.UPI) {
+                        intent.putExtra("Amount", Float.toString(finalAmount));
+                        btnPay.setEnabled(true);
+                    } else {
+                        Toast.makeText(this, "Payment by cash", Toast.LENGTH_SHORT)
+                                .show();
+                    }
                     break;
                 case R.id.owe_total:
                     btnPay.setEnabled(true);
                     finalAmount = amount;
-                    intent.putExtra("Amount", Float.toString(finalAmount));
+                    if (mode == PaymentMode.UPI) {
+                        intent.putExtra("Amount", Float.toString(finalAmount));
+                        btnPay.setEnabled(true);
+                    } else {
+                        Toast.makeText(this, "Payment by cash", Toast.LENGTH_SHORT)
+                                .show();
+                    }
                     break;
             }
         });
@@ -323,6 +363,9 @@ public class TransactionActivity extends AppCompatActivity implements
                     checkAnimation.setVisibility(View.VISIBLE);
                     Toast.makeText(getApplicationContext(), "Transaction Added",
                             Toast.LENGTH_SHORT).show();
+
+                    // for refreshing
+                    onRefresh();
 
                     Log.e("TRANS_PASS", getString(R.string.status_code)
                             + statusCode);

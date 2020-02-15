@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -263,7 +264,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         Button btnYes;
         LinearLayout searchLayout;
         LinearLayout searchAgainLayout;
-        LinearLayout topLayout;
+        RelativeLayout topLayout;
         TextView foundFriendName;
         AtomicInteger FLAG = new AtomicInteger();
 
@@ -296,8 +297,8 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         // selecting Name Input
         selectNameInput.setOnClickListener(view -> {
             FLAG.set(0);
-            etFriendName.setVisibility(View.VISIBLE);
             etFriendNumber.setVisibility(View.GONE);
+            etFriendName.setVisibility(View.VISIBLE);
 
         });
 
@@ -324,7 +325,14 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
                 public void onResponse(retrofit2.Call<User> call, Response<User>
                         response) {
 
-                    //foundFriendName.setText();
+                    try {
+                        foundFriendName.setText(response.body().toString());
+                    } catch (Exception e) {
+                        Log.e("Search error", e.getMessage());
+                        Toast.makeText(getActivity(), "An error occured",Toast.LENGTH_SHORT)
+                                .show();
+                        myDialog.dismiss();
+                    }
                     btnYes.setVisibility(View.VISIBLE);
                     searchLayout.setVisibility(View.GONE);
                     searchAgainLayout.setVisibility(View.VISIBLE);

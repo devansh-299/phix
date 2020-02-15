@@ -31,11 +31,11 @@ public interface UserApi {
                         @Field("phone_number") String mobileNumber);
 
     @FormUrlEncoded
-    @POST("add_friend/name/")
+    @POST("profile/un/")
     Call<User> searchFriendByName(@Field("search") String searchQuery);
 
     @FormUrlEncoded
-    @POST("add_friend/number/")
+    @POST("profile/ph/")
     Call<User> searchFriendByNumber(@Field("search") String searchQuery);
 
 }

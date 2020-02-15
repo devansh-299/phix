@@ -146,7 +146,7 @@
                             android:layout_marginLeft="10dp"
                             android:layout_marginTop="10dp"
                             android:layout_weight="1"
-                            android:text="Month's Expense"
+                            android:text="Monthly Expense"
                             android:textColor="@color/material_blue"
                             android:textSize="20dp"
                             android:textStyle="bold" />
@@ -188,7 +188,7 @@
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_weight="1"
-                                android:text="Average Expense"
+                                android:text="Avg. Daily Expense"
                                 android:textColor="@color/material_blue"
                                 android:textSize="20dp"
                                 android:textStyle="bold" />

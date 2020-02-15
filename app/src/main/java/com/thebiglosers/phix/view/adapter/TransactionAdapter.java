@@ -45,6 +45,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         Transaction transaction = mTransactionList.get(position);
         holder.title.setText(transaction.getDescription());
         holder.amount.setText(Float.toString(transaction.getAmount()));
+        holder.date.setText(transaction.getDate());
     }
 
     public void updateImageList(List<Transaction> newList) {
