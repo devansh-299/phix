@@ -5,27 +5,17 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.Transaction;
-
 import com.thebiglosers.phix.view.activity.MainActivity;
-
 import com.thebiglosers.phix.view.adapter.TransactionAdapter;
-
 import com.thebiglosers.phix.viewmodel.TransactionViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -35,8 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 
 public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -76,7 +66,7 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         errorLayout.setVisibility(View.GONE);
         notFoundLayout.setVisibility(View.GONE);
 
-        Button errorButton = (Button) errorLayout.findViewById( R.id.error_layout_retry );
+        Button errorButton = errorLayout.findViewById( R.id.error_layout_retry );
         errorButton.setOnClickListener(view1 -> onRefresh());
 
         mAdapter = new TransactionAdapter(transactionList);

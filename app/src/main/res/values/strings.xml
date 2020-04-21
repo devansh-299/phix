@@ -1,8 +1,6 @@
 <resources>
-    <string name="app_name">Phix</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">Phix</string>
     <string name="welcome">Welcome</string>
     <string name="message_signin_successful">Successfully signed in. Welcome!</string>
     <string name="message_signin_failed">We couldn\'t sign you in. Please try again later.</string>
@@ -28,4 +26,17 @@
     <string name="transaction_failed">Transaction failed.Please try again</string>
     <string name="transaction_cancelled_by_user">Payment cancelled by user.</string>
     <string name="check_first">check_first_time</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="add_transaction">Add Transaction</string>
+    <string name="please_complete_details">Please complete the details</string>
+    <string name="transaction_added">Transaction Added</string>
+    <string name="search_friend">Search Friend</string>
+    <string name="search_again">Search Again</string>
+    <string name="no_friend_found">No Friend Found</string>
+    <string name="registration_failed">Registration Failed</string>
+    <string name="retry_exit">Do you want to retry or exit?</string>
+    <string name="retry">Retry</string>
+    <string name="exit">Exit</string>
+    <string name="please_enter_details">Please enter the details</string>
+
 </resources>

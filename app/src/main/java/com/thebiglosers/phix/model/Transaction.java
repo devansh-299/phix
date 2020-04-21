@@ -1,10 +1,15 @@
 package com.thebiglosers.phix.model;
 
+
+import com.google.gson.annotations.SerializedName;
+
+
 public class Transaction {
 
     Float amount;
     String description;
     String source;
+    @SerializedName("txn_date_time")
     String date;
     String destination;
 
@@ -15,9 +20,7 @@ public class Transaction {
         this.destination = destination;
     }
 
-    public Float getAmount() {
-        return amount;
-    }
+    public Float getAmount() { return amount; }
 
     public String getDescription() {
         return description;

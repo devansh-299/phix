@@ -5,36 +5,23 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.User;
-import com.thebiglosers.phix.server.ApiClient;
-import com.thebiglosers.phix.server.UserApi;
 import com.thebiglosers.phix.view.activity.MainActivity;
 import com.thebiglosers.phix.view.activity.TransactionActivity;
 import com.thebiglosers.phix.view.adapter.UserAdapter;
 import com.thebiglosers.phix.viewmodel.UserViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -45,9 +32,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
@@ -71,7 +55,7 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
     @BindView(R.id.swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
 
-
+    private static final String TAG = "PersonalFragment";
     private List<User> userList = new ArrayList<>();
     private UserAdapter mAdapter;
     Dialog myDialog;
@@ -244,127 +228,16 @@ public class PersonalFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
 
         @Override
-        public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
-        }
+        public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
 
         @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-        }
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) { }
     }
 
     public void popAddFriend() {
 
-        EditText etFriendName;
-        EditText etFriendNumber;
-        Button btSearchFriend;
-        Button btSearchAgain;
-        Button selectNameInput;
-        Button selectNumberInput;
-        Button btnYes;
-        LinearLayout searchLayout;
-        LinearLayout searchAgainLayout;
-        RelativeLayout topLayout;
-        TextView foundFriendName;
-        AtomicInteger FLAG = new AtomicInteger();
-
-        myDialog.setContentView(R.layout.popup_user);
-
-        topLayout = myDialog.findViewById(R.id.popup_top_bar);
-        searchAgainLayout = myDialog.findViewById(R.id.layout_found);
-        searchAgainLayout.setVisibility(View.GONE);
-        searchLayout = myDialog.findViewById(R.id.layout_search_friend);
-        etFriendName = myDialog.findViewById(R.id.et_friend_name);
-        etFriendNumber = myDialog.findViewById(R.id.et_friend_phone_number);
-        selectNameInput = myDialog.findViewById(R.id.bt_search_friend);
-        selectNumberInput = myDialog.findViewById(R.id.bt_search_phone_number);
-        btSearchFriend = myDialog.findViewById(R.id.bt_search_friend);
-        btSearchAgain = myDialog.findViewById(R.id.bt_search_again);
-        foundFriendName = myDialog.findViewById(R.id.tv_found_friend);
-        btnYes = myDialog.findViewById(R.id.btn_yes_);
-
-        // defining initial status
-        etFriendNumber.setVisibility(View.GONE);
-
-        // selecting Number Input
-        selectNumberInput.setOnClickListener(view -> {
-            FLAG.set(1);
-            etFriendNumber.setVisibility(View.VISIBLE);
-            etFriendName.setVisibility(View.GONE);
-
-        });
-
-        // selecting Name Input
-        selectNameInput.setOnClickListener(view -> {
-            FLAG.set(0);
-            etFriendNumber.setVisibility(View.GONE);
-            etFriendName.setVisibility(View.VISIBLE);
-
-        });
-
-        btSearchFriend.setOnClickListener(view -> {
-
-            // for loading
-            foundFriendName.setText("Loading...");
-            btnYes.setVisibility(View.GONE);
-            searchLayout.setVisibility(View.GONE);
-            searchAgainLayout.setVisibility(View.VISIBLE);
-            topLayout.setVisibility(View.GONE);
-
-            Call<User> call;
-
-            UserApi userApi = ApiClient.getClient().create(UserApi.class);
-            if (FLAG.get() == 0) {
-                call = userApi.searchFriendByName(etFriendName.getText().toString());
-            } else {
-                call = userApi.searchFriendByNumber(etFriendNumber.getText().toString());
-            }
-
-            call.enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(retrofit2.Call<User> call, Response<User>
-                        response) {
-
-                    try {
-                        foundFriendName.setText(response.body().toString());
-                    } catch (Exception e) {
-                        Log.e("Search error", e.getMessage());
-                        Toast.makeText(getActivity(), "An error occured",Toast.LENGTH_SHORT)
-                                .show();
-                        myDialog.dismiss();
-                    }
-                    btnYes.setVisibility(View.VISIBLE);
-                    searchLayout.setVisibility(View.GONE);
-                    searchAgainLayout.setVisibility(View.VISIBLE);
-
-                    Log.e("ADD FRIEND", "Call Successful");
-                }
-
-                @Override
-                public void onFailure(retrofit2.Call<User> call, Throwable t) {
-
-                    foundFriendName.setText("No user found!");
-                    btnYes.setVisibility(View.GONE);
-                    searchLayout.setVisibility(View.GONE);
-                    searchAgainLayout.setVisibility(View.VISIBLE);
-
-                    Log.e("ADD FRIEND", "Call Unsuccessful "+t.getMessage());
-                }
-            });
-        });
-
-        btnYes.setOnClickListener(view -> {
-            Toast.makeText(getActivity(), "Friend Added",Toast.LENGTH_SHORT).show();
-            myDialog.dismiss();
-        });
-
-        btSearchAgain.setOnClickListener(view -> {
-            topLayout.setVisibility(View.VISIBLE);
-            searchLayout.setVisibility(View.VISIBLE);
-            searchAgainLayout.setVisibility(View.GONE);
-        });
-
-        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        myDialog.show();
+        AddFriendDialog addFriendDialog = AddFriendDialog.newInstance();
+        addFriendDialog.show(getActivity().getSupportFragmentManager(),
+                "Add Friend Dialog");
     }
 }

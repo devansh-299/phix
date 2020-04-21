@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#6C63FF</color>
 
     <!--Custom Colors-->
-
     <color name="material_black">#272727</color>
     <color name="material_blue">#6C63FF</color>
     <color name="white">#FFFFFF</color>

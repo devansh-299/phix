@@ -1,40 +1,30 @@
 package com.thebiglosers.phix.view.activity;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import butterknife.OnClick;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -43,19 +33,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.Transaction;
 import com.thebiglosers.phix.model.User;
-import com.thebiglosers.phix.server.ApiClient;
-import com.thebiglosers.phix.server.TransactionApi;
-import com.thebiglosers.phix.util.SwipeController;
-import com.thebiglosers.phix.util.SwipeControllerActions;
 import com.thebiglosers.phix.view.adapter.TransactionAdapter;
+import com.thebiglosers.phix.view.fragment.AddTransactionDialog;
+import com.thebiglosers.phix.view.fragment.PersonalFragment;
 import com.thebiglosers.phix.viewmodel.TransactionViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class TransactionActivity extends AppCompatActivity implements
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener,
+        PersonalFragment.RecyclerItemClickListener.OnItemClickListener {
 
     @BindView(R.id.rv_friend_transaction)
     RecyclerView rvFriendTransaction;
@@ -117,7 +105,7 @@ public class TransactionActivity extends AppCompatActivity implements
 
         notFoundLayout.setVisibility(View.GONE);
         errorLayout.setVisibility(View.GONE);
-        Button myView = (Button) errorLayout.findViewById( R.id.error_layout_retry );
+        Button myView = errorLayout.findViewById( R.id.error_layout_retry );
         myView.setOnClickListener(view1 -> onRefresh());
 
         myDialog = new Dialog(this);
@@ -152,52 +140,19 @@ public class TransactionActivity extends AppCompatActivity implements
         rvFriendTransaction.setLayoutManager(mLayoutManager);
         rvFriendTransaction.setItemAnimator(new DefaultItemAnimator());
         rvFriendTransaction.setAdapter(mAdapter);
-
-
-
-        // for swiping items
-        SwipeController swipeController = new SwipeController();
-        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeController);
-        itemTouchhelper.attachToRecyclerView(rvFriendTransaction);
-
-        SwipeController finalSwipeController = swipeController;
-        rvFriendTransaction.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-                finalSwipeController.onDraw(c);
-            }
-        });
-
-        swipeController = new SwipeController(new SwipeControllerActions() {
-            @Override
-            public void onRightClicked(int position) {
-
-                popUpSplitAmount(PaymentMode.UPI,transactionList.get(position).getAmount());
-            }
-            @Override
-            public void onLeftClicked(int position) {
-                popUpSplitAmount(PaymentMode.UPI,transactionList.get(position).getAmount());
-            }
-        });
-
-
-        rvFriendTransaction.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
-                    fab.hide();
-                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE) {
-                    fab.show();
-                }
-            }
-        });
+        rvFriendTransaction.addOnItemTouchListener(
+                new PersonalFragment.RecyclerItemClickListener(this, this));
 
         viewModel.refresh(mUniqueUserName, friendUniqueUserName);
 
         fab.setOnClickListener(view -> popUpAddTransaction());
 
         observeViewModel();
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        popUpSplitAmount(PaymentMode.UPI, transactionList.get(position).getAmount());
     }
 
     private void popUpSplitAmount(PaymentMode mode,Float amount) {
@@ -296,7 +251,7 @@ public class TransactionActivity extends AppCompatActivity implements
 
         });
 
-
+        // for loading
         viewModel.loading.observe(this, isLoading -> {
             if (isLoading != null && isLoading instanceof Boolean) {
                 if (isLoading) {
@@ -312,91 +267,19 @@ public class TransactionActivity extends AppCompatActivity implements
     }
 
     public void popUpAddTransaction() {
-
-        LinearLayout addLayout;
-        RelativeLayout transactionLoading;
-        EditText etAmount;
-        EditText etDescription;
-        Button btAddTransaction;
-        LottieAnimationView checkAnimation;
-        LottieAnimationView errorAnimation;
-        ProgressBar progressBar;
-        addTransactionDialog.setContentView(R.layout.popup_transaction);
-
-        addLayout = addTransactionDialog.findViewById(R.id.add_transaction_layout);
-        btAddTransaction = addTransactionDialog.findViewById(R.id.popup_add_transaction);
-        etAmount = addTransactionDialog.findViewById(R.id.popup_amount);
-        etDescription = addTransactionDialog.findViewById(R.id.popup_description);
-        transactionLoading = addTransactionDialog.findViewById(R.id.transaction_loading);
-        progressBar = addTransactionDialog.findViewById(R.id.add_transaction_progress);
-        checkAnimation = addTransactionDialog.findViewById(R.id.done_adding_transaction);
-        errorAnimation = addTransactionDialog.findViewById(R.id.error_adding_animation);
-
-
-        transactionLoading.setVisibility(View.GONE);
-        checkAnimation.setVisibility(View.GONE);
-        errorAnimation.setVisibility(View.GONE);
-        progressBar.setVisibility(View.GONE);
-
-        btAddTransaction.setOnClickListener(view -> {
-
-            addLayout.setVisibility(View.GONE);
-            transactionLoading.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.VISIBLE);
-
-
-            TransactionApi transactionApi = ApiClient.getClient().create(TransactionApi.class);
-            Call<Transaction> call = transactionApi.addTransaction(
-                    etDescription.getText().toString(),
-                    Float.valueOf(etAmount.getText().toString()),
-                    mUniqueUserName,
-                    friendUniqueUserName);
-
-            call.enqueue(new Callback<Transaction>() {
-                @Override
-                public void onResponse(retrofit2.Call<Transaction> call, Response<Transaction>
-                        response) {
-
-                    int statusCode = response.code();
-
-                    progressBar.setVisibility(View.GONE);
-                    checkAnimation.setVisibility(View.VISIBLE);
-                    Toast.makeText(getApplicationContext(), "Transaction Added",
-                            Toast.LENGTH_SHORT).show();
-
-                    // for refreshing
-                    onRefresh();
-
-                    Log.e("TRANS_PASS", getString(R.string.status_code)
-                            + statusCode);
-                    try {
-                        Log.e("TRANS_PASS", "Body" + response.body().toString());
-                    } catch (Exception e) {
-                        Log.e ("TRANS PASS", "Empty Response");
-                    }
-                }
-
-                @Override
-                public void onFailure(retrofit2.Call<Transaction> call, Throwable t) {
-                    Log.e("FAIL_TRANS", getString(R.string.error)
-                            + t.toString());
-
-                    progressBar.setVisibility(View.GONE);
-                    errorAnimation.setVisibility(View.VISIBLE);
-                    Toast.makeText(getApplicationContext(), "Error occurred",
-                            Toast.LENGTH_SHORT).show();
-
-                }
-            });
-        });
-        addTransactionDialog.getWindow().setBackgroundDrawable(
-                new ColorDrawable(Color.TRANSPARENT));
-        addTransactionDialog.show();
-
+        AddTransactionDialog addTransactionDialog = AddTransactionDialog.newInstance(
+                mUniqueUserName, friendUniqueUserName);
+        addTransactionDialog.show(getSupportFragmentManager(), "Add Transaction Dialog");
     }
 
     @Override
     public void onRefresh() {
         viewModel.refresh(mUniqueUserName, friendUniqueUserName);
+    }
+
+    @OnClick(R.id.btn_back)
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

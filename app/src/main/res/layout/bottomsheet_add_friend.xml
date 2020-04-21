@@ -1,96 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="270dp"
+    android:layout_height="wrap_content"
+    android:background="@color/fui_transparent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:background="@color/fui_transparent"
-        android:layout_height="270dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.8"
-            android:background="@drawable/top_round_popup"/>
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_background"
+            android:orientation="horizontal">
+
+       <ImageView
+           android:layout_width="80dp"
+           android:layout_height="80dp"
+           android:layout_marginTop="@dimen/value_20dp"
+           android:layout_marginLeft="@dimen/value_20dp"
+           android:layout_marginRight="@dimen/value_15dp"
+           android:src="@drawable/splash_icon"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/material_blue"
+            android:layout_marginLeft="@dimen/value_20dp"
+            android:layout_marginTop="@dimen/value_10dp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textSize="30sp"
+            android:singleLine="true"
+            android:text="@string/add_friend" />
+
+        </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/add_transaction_layout"
+            android:id="@+id/add_friend_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="3.5"
-            android:orientation="vertical"
-            android:background="@drawable/bottom_round_popup">
+            android:layout_weight="4"
+            android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_height="wrap_content"
+                app:helperText="Use username or phone number"
                 android:layout_margin="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/popup_description"
+                    android:id="@+id/et_search_query"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Add Description" />
+                    android:hint="Search Friend" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/popup_amount"
-                    android:layout_width="match_parent"
-                    android:inputType="number"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter Transaction Amount" />
-
-
-            </com.google.android.material.textfield.TextInputLayout>
-
 
             <Button
-                android:id="@+id/popup_add_transaction"
+                android:id="@+id/bottomsheet_add_friend"
                 android:layout_width="150dp"
                 android:layout_marginBottom="10dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_button_background"
                 android:layout_gravity="center_horizontal"
-                android:text="Add"
+                android:text="@string/search_friend"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 
         </LinearLayout>
 
-
-        <RelativeLayout
-            android:id="@+id/transaction_loading"
+        <LinearLayout
+            android:id="@+id/friend_list_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="3.5"
-            android:orientation="vertical"
-            android:background="@drawable/bottom_round_popup">
+            android:layout_weight="4"
+            android:orientation="vertical">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/bottomsheet_friend_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:background="@color/white" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/loading_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:orientation="vertical">
 
             <ProgressBar
-                android:id="@+id/add_transaction_progress"
+                android:id="@+id/add_friend_progress"
                 android:layout_width="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
+                android:layout_marginBottom="@dimen/value_20dp"
                 android:layout_height="wrap_content" />
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/done_adding_transaction"
+                android:id="@+id/done_adding_friend"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="check_mark.json"
-                app:lottie_loop="true"
+                app:lottie_loop="false"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:layout_width="200dp"
@@ -101,7 +121,7 @@
                 android:id="@+id/error_adding_animation"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="error_animation.json"
-                app:lottie_loop="true"
+                app:lottie_loop="false"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:layout_width="100dp"
@@ -111,6 +131,5 @@
         </RelativeLayout>
 
     </LinearLayout>
-
 
 </RelativeLayout>

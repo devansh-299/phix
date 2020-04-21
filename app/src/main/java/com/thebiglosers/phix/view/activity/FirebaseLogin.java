@@ -1,29 +1,28 @@
 package com.thebiglosers.phix.view.activity;
 
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import androidx.lifecycle.ViewModelProviders;
 
-import android.content.DialogInterface;
+import butterknife.ButterKnife;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Process;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.thebiglosers.phix.R;
 import com.thebiglosers.phix.model.User;
-import com.thebiglosers.phix.server.ApiClient;
-import com.thebiglosers.phix.server.UserApi;
+import com.thebiglosers.phix.viewmodel.LoginViewModel;
 
 
 public class FirebaseLogin extends AppCompatActivity {
@@ -31,13 +30,16 @@ public class FirebaseLogin extends AppCompatActivity {
     public static int SIGN_IN_REQUEST_CODE = 10;
     SharedPreferences preferences;
     FirebaseUser user;
+    private LoginViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase_login);
+        ButterKnife.bind(this);
 
         preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivityForResult(AuthUI.getInstance()
@@ -65,7 +67,14 @@ public class FirebaseLogin extends AppCompatActivity {
                                 R.string.message_signin_successful, Toast.LENGTH_LONG).show();
 
                         user = FirebaseAuth.getInstance().getCurrentUser();
-                        getUpi(user);
+                        Handler handler=new Handler();
+                        Runnable r = new Runnable() {
+                            public void run() {
+                                // introducing delay of 5 secs
+                                getUpi(user);
+                            }
+                        };
+                        handler.postDelayed(r, 5000);
 
                     } else {
                         Toast.makeText(this, R.string.message_signin_failed,
@@ -85,8 +94,8 @@ public class FirebaseLogin extends AppCompatActivity {
         final View dialogView = inflater.inflate(R.layout.alert_set_upi_id, null);
         dialogBuilder.setView(dialogView);
 
-        final EditText etUpiId = (EditText) dialogView.findViewById(R.id.et_upi_id);
-        final EditText etMobileNumber = (EditText)dialogView.findViewById(R.id.et_login_mobile);
+        final EditText etUpiId = dialogView.findViewById(R.id.et_upi_id);
+        final EditText etMobileNumber = dialogView.findViewById(R.id.et_login_mobile);
 
         dialogBuilder.setPositiveButton(getString(R.string.done), (dialog, whichButton) -> {
 
@@ -94,7 +103,7 @@ public class FirebaseLogin extends AppCompatActivity {
             .toString().matches("")) {
                 Toast.makeText(
                         this,
-                        "Please enter the details",
+                        R.string.please_enter_details,
                         Toast.LENGTH_SHORT).show();
                 getUpi(user);
             } else {
@@ -106,51 +115,14 @@ public class FirebaseLogin extends AppCompatActivity {
                 // for saving user data for first time
                 saveCurrentUser(user1);
 
-                UserApi userApi = ApiClient.getClient().create(UserApi.class);
-
                 Log.e("LoginInUser", user.getDisplayName()
                         + user.getEmail()
                         + user.getPhotoUrl().toString()
                         + etUpiId.getText().toString()
                         + etMobileNumber.getText().toString());
 
-                Call<User> call = userApi.saveUser(user1.getFullName(),
-                        user1.getImageString(),
-                        user1.getEmail(),
-                        user1.getUpiString(),
-                        user1.getMobileNumber());
-
-                call.enqueue(new Callback<User>() {
-                    @Override
-                    public void onResponse(retrofit2.Call<User> call, Response<User> response) {
-
-                        int statusCode = response.code();
-
-                        Log.e(getString(R.string.pass), getString(R.string.status_code)
-                                + statusCode);
-                        try {
-                            /*
-                            this log also checks if response is null or not
-                             */
-                            Log.e(getString(R.string.pass), "Body"
-                                    + response.body().toString());
-                            startMainActivity();
-                        } catch (Exception e) {
-                            Log.e("LOG PASS", "Empty Response");
-                            loginFailed();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(retrofit2.Call<User> call, Throwable t) {
-                        Log.e(getString(R.string.fail), getString(R.string.error)
-                                + t.toString());
-
-                        loginFailed();
-                    }
-                });
-
-
+                viewModel.loginUser(this, user1);
+                observerViewModel();
             }
         });
 
@@ -158,16 +130,27 @@ public class FirebaseLogin extends AppCompatActivity {
         b.show();
     }
 
+    private void observerViewModel() {
+        viewModel.loginSuccessful.observe(this, loggedIn -> {
+            if (loggedIn != null && loggedIn == true) {
+                startMainActivity();
+            } else if (loggedIn != null && loggedIn == false) {
+                loginFailed();
+            }
+        });
+    }
+
     private void loginFailed() {
+
         new AlertDialog.Builder(this)
-                .setTitle("Registration Failed")
-                .setMessage("Do you want to retry or exit?")
-                .setPositiveButton("Retry", (dialog, which) -> {
+                .setTitle(R.string.registration_failed)
+                .setMessage(R.string.retry_exit)
+                .setPositiveButton(R.string.retry, (dialog, which) -> {
                     getUpi(user);
                 })
-                .setNegativeButton("Exit", ((dialogInterface, i) -> {
+                .setNegativeButton(R.string.exit, ((dialogInterface, i) -> {
                     moveTaskToBack(true);
-                    android.os.Process.killProcess(android.os.Process.myPid());
+                    Process.killProcess(Process.myPid());
                     System.exit(1);
                 }))
                 .setIcon(R.drawable.error_image)

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -39,7 +40,6 @@
                 android:layout_height="match_parent"
                 layout="@layout/error_layout" />
 
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -57,7 +57,6 @@
                     android:layout_height="match_parent"
                     layout="@layout/not_found_layout" />
 
-
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fab"
                     android:layout_width="93dp"
@@ -66,7 +65,7 @@
                     android:layout_alignBottom="@+id/rv_Transactions"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:foreground="@drawable/ic_person_add"
+                    android:src="@drawable/ic_person_add"
                     app:fabSize="normal" />
 
             </RelativeLayout>

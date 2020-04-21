@@ -3,14 +3,12 @@ package com.thebiglosers.phix.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
@@ -40,10 +37,10 @@ import com.thebiglosers.phix.model.HomeDataModel;
 import com.thebiglosers.phix.view.activity.MainActivity;
 import com.thebiglosers.phix.view.activity.ProfileActivity;
 import com.thebiglosers.phix.viewmodel.HomeDataViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 

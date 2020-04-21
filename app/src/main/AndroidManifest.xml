@@ -15,12 +15,17 @@
         <activity
             android:name=".view.activity.IntroductionActivity"
             android:screenOrientation="portrait" />
+
         <activity android:name=".view.activity.PaymentActivity"
             android:screenOrientation="portrait" />
+
         <activity android:name=".view.activity.TransactionActivity"
+            android:windowSoftInputMode="adjustPan|adjustResize"
             android:screenOrientation="portrait" />
+
         <activity android:name=".view.activity.FirebaseLogin"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activity.SpashScreen"
             android:screenOrientation="portrait"
@@ -31,13 +36,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".view.activity.ProfileActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activity.MainActivity"
             android:screenOrientation="portrait" />
-    </application>
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    </application>
 
 </manifest>

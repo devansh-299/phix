@@ -3,14 +3,13 @@ package com.thebiglosers.phix.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 import com.github.paolorotolo.appintro.model.SliderPage;
 import com.thebiglosers.phix.R;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 
 public class IntroductionActivity extends AppIntro {
 

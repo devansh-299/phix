@@ -1,12 +1,12 @@
 package com.thebiglosers.phix.model;
 
-import com.google.gson.annotations.SerializedName;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeDataModel {
 
+public class HomeDataModel {
 
     Map<Integer, Integer> data = new HashMap<Integer, Integer>();
 
@@ -21,7 +21,6 @@ public class HomeDataModel {
 
     @SerializedName("daily_avg_current")
     Double dailyAvg;
-
 
     public HomeDataModel(Map<Integer, Integer> data, Double today, Double month, Double dailyAvg) {
         this.data = data;
@@ -49,6 +48,5 @@ public class HomeDataModel {
     public Double getDailyAvg() {
         return dailyAvg;
     }
-
 
 }
