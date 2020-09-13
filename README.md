@@ -7,7 +7,7 @@
 Phix is a free tool for friends and roommates to keep track of their shared bills and split the expenses with UPI payment system. Phix also helps users to track their expenses and provides detailed
 user's expenditure via user-friendly visualisations. <br />
 The application is build Android Studio and completely written in Java. The application is built upon Model View ViewModel (MVVM) architecture and consumes the REST APIs exposed from our back-end <br />
-You can find the source code of the back-end [here](https://github.com/khizirsiddiqui/phix-hackathon)
+**You can find the source code of the back-end from [here](https://github.com/khizirsiddiqui/phix-hackathon)**
 
 
 ## Screenshots
@@ -16,10 +16,9 @@ You can find the source code of the back-end [here](https://github.com/khizirsid
     
 |Introduction Slides|Home Screen|Transactions|Payments|
 |------|------|------|------|
-|<img src="https://user-images.githubusercontent.com/46667021/91485400-7018d400-e8c8-11ea-8789-3e9e6ee77ad7.jpg" width="280" height="400" />|<img src="https://user-images.githubusercontent.com/46667021/91485469-8a52b200-e8c8-11ea-858e-fd1e365fa2d7.jpg" width="280" height="400" />|<img src="https://user-images.githubusercontent.com/46667021/91485518-9ccceb80-e8c8-11ea-8bc8-5bc29fb9f176.jpg" width="280" height="400" />|<img src="https://user-images.githubusercontent.com/46667021/91485603-b9692380-e8c8-11ea-9f7e-66c53f63aa82.jpg" width="280" height="400" />|
+|<img src="https://user-images.githubusercontent.com/46667021/91485400-7018d400-e8c8-11ea-8789-3e9e6ee77ad7.jpg" width="280" height="400" />|<img src="https://user-images.githubusercontent.com/46667021/91485469-8a52b200-e8c8-11ea-858e-fd1e365fa2d7.jpg" width="280" height="400" />|<img src="https://user-images.githubusercontent.com/46667021/93011530-85724b80-f5b4-11ea-8b9b-b729989931fe.png" width="280" height="400" />|<img src="https://user-images.githubusercontent.com/46667021/91485603-b9692380-e8c8-11ea-9f7e-66c53f63aa82.jpg" width="280" height="400" />|
 </p>
 
-* _Above screen shots are based on `Version 1` of the application_
 * _For more details and insights of the application, please visit [here](https://docs.google.com/presentation/d/1u7vTNquYGH8bXIZ1s2eLG6UFJ1ZmVfovqQcsf_-gie4/edit?usp=sharing)_
 
 ## Contribute
